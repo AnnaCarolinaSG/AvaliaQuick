@@ -1,0 +1,130 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Página Inicial {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #ccc;
+        }
+        .container {
+            display: flex;
+            max-width: 900px;
+            margin: auto;
+            background-color: #888;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .tabs {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            background-color: #666;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .tab-button {
+            background: #bbb;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: left;
+            border-radius: 5px;
+        }
+        .tab-button.active {
+            background: #ddd;
+        }
+        .content {
+            flex-grow: 1;
+            background: #bbb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-left: 20px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    <h2>Avaliação Fevereiro/Março 2025 - ano de 2024</h2>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
+            <button class="tab-button" onclick="openTab('prontos')">Prontos para Avaliação</button>
+            <button class="tab-button" onclick="openTab('pendentes')">Envios Pendentes</button>
+            <button class="tab-button" onclick="openTab('finalizadas')">Avaliações Finalizadas</button>
+            <button class="tab-button" onclick="openTab('final')">Avaliação Final</button>
+        </div>
+
+        <div class="content">
+            <div id="info" class="tab-content active">
+                <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
+                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> 14</p>
+                <p><strong>ENVIOS PENDENTES:</strong> 3</p>
+                <p><strong>AVALIAÇÕES EM ESPERA:</strong> 14</p>
+                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> 0</p>
+                <p><strong>PESQUISADORES AVALIADOS:</strong> 0</p>
+                <p><strong>MÉDIA FINAL:</strong> 0</p>
+            </div>
+
+            <div id="prontos" class="tab-content">
+                <h3>Prontos para Avaliação</h3>
+                <p>Conteúdo sobre os itens prontos para avaliação.</p>
+            </div>
+
+            <div id="pendentes" class="tab-content">
+                <h3>Envios Pendentes</h3>
+                <p>Lista de envios ainda não avaliados.</p>
+            </div>
+
+            <div id="finalizadas" class="tab-content">
+                <h3>Avaliações Finalizadas</h3>
+                <p>Detalhes das avaliações já concluídas.</p>
+            </div>
+
+            <div id="final" class="tab-content">
+                <h3>Avaliação Final</h3>
+                <p>Resumo final da avaliação.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(tabId) {
+            // Remove a classe 'active' de todos os botões e conteúdos
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Ativa o botão e o conteúdo correspondente
+            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();
+
+    });
+  </script>
+
+{% endblock javascripts %}
