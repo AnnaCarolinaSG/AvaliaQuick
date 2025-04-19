@@ -43,7 +43,7 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
-        h4 {
+        h3 {
             font-style: italic;
             color: #333;
             margin-top: 20px;
@@ -92,10 +92,26 @@
             font-size: 0.9em;
             color: #555;
         }
+        .input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
 <form class="container">
+<h2>Avaliação Embrapa [ano atual]</h2>
+    <div class="row">
+        <div class="label-input">
+            <label>Nome do pesquisador:</label>
+            <input type="text" name="pesquisador" value="Fulaninho de Tal da Silva Barreto">
+        </div>
+        <div class="label-input">
+            <label>Matrícula:</label>
+            <input type="number" name="matricula" value="356487">
+        </div>
+    </div>
 {% block content %} {% endblock %}
     <div class="buttons">
         <button type="button" class="cancelar">Cancelar</button>

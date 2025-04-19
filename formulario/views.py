@@ -40,7 +40,7 @@ def criarFormularioB(request):
             return redirect('/listaFormularioB')
     else:
         form = FormularioBForm()
-    return render(request, 'formulario/formularioA.html', {'form': form, 'tipo': 'B'})
+    return render(request, 'formulario/formularioB.html', {'form': form, 'tipo': 'B'})
 
 def editarFormularioB(request, id):
     obj = get_object_or_404(Formulario_B, id=id)
@@ -48,7 +48,7 @@ def editarFormularioB(request, id):
     if form.is_valid():
         form.save()
         return redirect('/listaFormularioB')
-    return  render(request, 'formulario/formularioA.html', {'form': form, 'tipo': 'B'})
+    return  render(request, 'formulario/formularioB.html', {'form': form, 'tipo': 'B'})
 
 
 #--FORMS C--
@@ -65,7 +65,7 @@ def criarFormularioC(request):
             return redirect('/listaFormularioC')
     else:
         form = FormularioCForm()
-    return render(request, 'formulario/formularioA.html', {'form': form, 'tipo': 'C'})
+    return render(request, 'formulario/formularioC.html', {'form': form, 'tipo': 'C'})
 
 def editarFormularioC(request, id):
     obj = get_object_or_404(Formulario_C, id=id)
@@ -73,7 +73,7 @@ def editarFormularioC(request, id):
     if form.is_valid():
         form.save()
         return redirect('/listaFormularioC')
-    return  render(request, 'formulario/formularioA.html', {'form': form, 'tipo': 'C'})
+    return  render(request, 'formulario/formularioC.html', {'form': form, 'tipo': 'C'})
 
 
 # Create your views here.
