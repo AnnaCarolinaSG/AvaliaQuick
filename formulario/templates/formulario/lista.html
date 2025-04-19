@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Formulários {{ tipo }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 5px #ddd;
+        }
+        a.button {
+            background-color: #007bff;
+            color: white;
+            padding: 6px 12px;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .top-bar {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-bar">
+            <h2>Lista de Formulários {{ tipo }}</h2>
+            <a class="button" href="/formulario{{ tipo }}/novo/">Novo formulário {{ tipo }}</a>
+        </div>
+
+        <ul>
+            {% for f in formularios %}
+                <li>
+                    <span>{{ f }}</span>
+                    <a class="button" href="/formulario{{ tipo }}/{{ f.id }}/editar/">Editar</a>
+                </li>
+            {% empty %}
+                <li>Nenhum formulário cadastrado ainda.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

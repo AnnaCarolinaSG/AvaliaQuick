@@ -1,0 +1,86 @@
+{% extends 'formulario/base.html' %}
+{% load static %}
+{% block content %}
+
+        <h2>Avaliação Embrapa [ano atual]</h2>
+
+        <div class="row">
+            <div class="label-input">
+                <label>Nome do pesquisador:</label>
+                <input type="text" name="pesquisador" value="Fulaninho de Tal da Silva Barreto">
+            </div>
+            <div class="label-input">
+                <label>Matrícula:</label>
+                <input type="number" name="matricula" value="356487">
+            </div>
+        </div>
+
+        <h4>PARTE A - COMPETÊNCIAS COMPORTAMENTAIS</h4>
+
+        <div class="question">
+            <p>Visão Sistêmica do Trabalho</p>
+            <ul>
+                <li>Empregado atua de forma sistêmica no trabalho, considerando os pontos de integração entre as entregas sob sua responsabilidade; a estratégia organizacional (missão, visão, valores, objetivos estratégicos, desafios de inovação, metas); o ambiente interno e externo da Unidade/Embrapa em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.
+</li>
+            </ul>
+            <div class="radios">
+                {% for i in "01234" %}
+                    <label><input type="radio" name="visao_sistemica" value="{{ i }}"> {{ i }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="question">
+            <p>Visão Analítica de Dados</p>
+            <ul>
+                <li>Empregado qualifica dados e informações dos ambientes internos e externos à Unidade ou à Embrapa de forma a contribuir com o planejamento, a gestão ou a execução de estratégias, projetos ou processos da Embrapa.</li>
+            </ul>
+            <div class="radios">
+                {% for i in "01234" %}
+                    <label><input type="radio" name="visao_analitica" value="{{ i }}"> {{ i }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="question">
+            <p>Foco em Planejamento do Trabalho</p>
+            <ul>
+                <li>Empregado planeja estratégias, projetos ou processos sob sua responsabilidade em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.</li>
+            </ul>
+            <div class="radios">
+                {% for i in "01234" %}
+                    <label><input type="radio" name="foco_planejamento" value="{{ i }}"> {{ i }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="question">
+            <p>Orientação para Mudanças</p>
+            <ul>
+                <li>Empregado se adapta à realidade dinâmica do contexto de trabalho e das entregas sob sua responsabilidade, desempenhando novos papéis e propondo </li>
+            </ul>
+            <div class="radios">
+                {% for i in "01234" %}
+                    <label><input type="radio" name="orientacao_mudancas" value="{{ i }}"> {{ i }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="question">
+            <p>Relações de Colaboração no Trabalho</p>
+            <ul>
+                <li>Empregado atua com cooperação, colaboração e solidariedade nos ambientes da Empresa e nas relações com parceiros. Entrega resultados colaborativamente, demonstra respeito com as pessoas no ambiente da Empresa e na relação com parceiros e compartilha recursos institucionais com os demais empregados da Unidade.</li>
+            </ul>
+            <div class="radios">
+                {% for i in "01234" %}
+                    <label><input type="radio" name="colaboracao_trabalho" value="{{ i }}"> {{ i }}</label>
+                {% endfor %}
+            </div>
+        </div>
+
+
+
+
+
+{% endblock %}
+

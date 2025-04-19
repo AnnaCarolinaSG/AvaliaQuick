@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('avaliaquick.urls')),
     path('login/', include('authentication.urls')),
+    path('', include('formulario.urls')),
 ]
