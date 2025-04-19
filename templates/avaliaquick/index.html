@@ -3,21 +3,28 @@
 {% block title %} Página Inicial {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=event_available" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,0,0,0&icon_names=group" />
+{% endblock stylesheets %}
 
 {% block content %}
 
-    <div class="container">
-        <div class="main-content">
-            <div class="card">
-                <p>⭐📊 Abrir avaliação atual</p>
+    <div class="container" style="width: 100vw; height: 100vh; padding: 20px; box-sizing: border-box; background-color: #ccc;">
+        <div class="main-container" style="display: flex; width: 100%; height: 100%;">
+            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px;">
+                <div class="card" style="height: 30%; justify-content: center; align-items: center;">
+                    <span class="material-symbols-outlined">event_available</span>
+                    <p>Abrir avaliação atual</p>
+                </div>
+                <div class="card" style="height: 30%; justify-content: center; align-items: center;">
+                    <span class="material-symbols-outlined">group</span>
+                    <p>Ver lista de pesquisadores</p>
+                </div>
             </div>
-            <div class="card">
-                <p>📋✏️ Ver lista de pesquisadores</p>
-            </div>
-            <div class="chart-container">
+            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px">
                 <h3>Gráfico de Avaliação</h3>
-                <canvas id="myChart"></canvas>
+                <canvas id="myChart" style="height: 30%; width: 50%"></canvas>
             </div>
         </div>
     </div>
