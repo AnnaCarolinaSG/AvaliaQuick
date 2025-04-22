@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Formulario_A, Formulario_B, Formulario_C
 from .forms import FormularioAForm, FormularioBForm, FormularioCForm
 
+def teste(request):
+    return render(request, 'formulario/teste.html')
+
 #--FORMS A--
 
 def listaFormularioA(request):

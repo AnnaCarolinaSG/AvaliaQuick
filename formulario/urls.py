@@ -16,4 +16,6 @@ urlpatterns = [
     path('formularioC/', views.listaFormularioC, name='listaFormularioC'),
     path('formularioC/novo/', views.criarFormularioC, name='criarFormularioC'),
     path('formularioC/<int:id>/editar/', views.editarFormularioC, name='editarFormularioC'),
+
+    path('teste', views.teste, name='testes')
 ]
