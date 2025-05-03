@@ -1,0 +1,7 @@
+<div class="radios">
+  {% for i in "01234" %}
+    <label>
+      <input type="radio" name="{{ field_name }}" value="{{ i }}"> {{ i }}
+    </label>
+  {% endfor %}
+</div>

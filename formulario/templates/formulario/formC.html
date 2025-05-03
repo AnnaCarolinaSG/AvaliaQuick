@@ -1,0 +1,82 @@
+{% extends 'formulario/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="align-items: center">
+        <div class="subtitle">PARTE C- CONTRIBUIÇÃO TÉCNICA</div>
+        <button class="btn-metricas">Consultar métricas avaliativas</button>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div>
+        <h4>C1 - Elaboração de Documentos Técnicos e Corporativos</h4>
+        <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
+    </div>
+
+    <div style="justify-content: right; display: flex;">
+        <p style="font-size: 12px;">Quantidade</p>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Elaboração de Notas Técnicas, Relatórios, Parecer ad-hoc de órgão de fomento, revista indexadas e documentos da série Embrapa. Atuação como Editor.</p>
+            <p style="font-size: 14px; margin-top: -15px; font-style: italic;">A fonte de avaliação atribuirá uma nota, considerando os comprovantes da sua efetiva e incontestável participação na elaboração ou revisão ad-hoc.</p>
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="atuacao_editor" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            <p>• Elaboração de Normas, Notas Técnicas, Relatórios, Memorandos, Pareceres com clareza, coesão e coerência de ideias.</p>
+            <p style="font-size: 14px; margin-top: -15px; font-style: italic;"> A fonte de avaliação atribuirá uma nota ao empregado, considerando os relatos, registrados, durante o ano, no IDEARE.</p>
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="clareza_coezao" max=2 %}
+        </div>
+    </div>
+
+    <!-- ================================================================================================ -->
+
+    <div>
+        <h4>C2 - Participação na gestão de contratos e convênios</h4>
+        <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=2 selected_value=selected_value id="gestor_contratos_2" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: -30px">
+            R$
+        </div>
+        <div>
+            {% include "./input_types/_input_text.html" with field_name="valor_gestor_contratos" %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=1 selected_value=selected_value id="gestor_contratos_1" %}
+        </div>
+        <div class="parametro-desc">
+            Sem ônus
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc">
+            Não possui contratos/convênios
+        </div>
+    </div>
+
+
+
+{% endblock %}
+{% block etapa %}
+<div class="etapa">Etapa 3/3</div>
+{% endblock %}

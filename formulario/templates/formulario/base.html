@@ -2,123 +2,187 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Avaliação Embrapa</title>
+    <title>Avaliação Embrapa [ano atual]</title>
+    <script src="script.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f0fc;
-            margin: 20px;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
         }
         .container {
-            border: 3px solid #6f42c1;
-            padding: 20px;
-            border-radius: 12px;
-            background-color: white;
-            max-width: 900px;
-            margin: auto;
+            width: 650px;
+            background: #fff;
+            margin: 30px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+            padding: 30px 40px 20px 40px;
         }
-        h2 {
-            background-color: #6f42c1;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
+        .header {
+            background: #6f3fd5;
+            color: #fff;
             text-align: center;
+            border-radius: 8px 8px 0 0;
+            padding: 14px 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 20px;
         }
         .row {
             display: flex;
             justify-content: space-between;
-            margin: 10px 0;
+            align-items: center;
+            margin-bottom: 10px;
         }
-        .label-input {
+        .row label {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .fixed-field {
+            width: 340px;
+            padding: 7px 10px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            background: #f5f8ef;
+            font-size: 1em;
+            color: #444;
+            margin-top: 2px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .fixed-field-short {
+            width: 100px;
+            padding: 7px 10px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            background: #f5f8ef;
+            font-size: 1em;
+            color: #444;
+            margin-top: 2px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .subtitle {
+            font-style: italic;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 8px;
+        }
+        .btn-metricas {
+            background: #7c3ee6;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            float: right;
+            margin-top: -33px;
+            margin-bottom: 10px;
+        }
+        .coluna_quantidade{
             display: flex;
             flex-direction: column;
-            width: 48%;
+            align-items: center;
+            justify-content: center;
+            margin-right: 6px;
         }
-        label {
+        .parametro_quant {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+            gap: 30px;
+        }
+        .parametro {
+            margin-bottom: 18px;
+        }
+        .parametro-title {
             font-weight: bold;
-            margin-bottom: 5px;
-        }
-        input[type="text"], input[type="number"] {
-            padding: 6px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        h3 {
-            font-style: italic;
-            color: #333;
             margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
-        .question {
-            margin: 20px 0;
+        .parametro-desc {
+            font-size: 0.98em;
+            text-align: justify;
         }
-        .question p {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .radio-group {
+            margin-top: 4px;
         }
-        .question ul {
-            margin-top: 0;
+        .radio-group label {
+            margin-right: 12px;
+            font-size: 1em;
         }
-        .radios {
-            margin-top: 5px;
-        }
-        .radios label {
-            margin-right: 15px;
-        }
-        .buttons {
+        .footer {
             display: flex;
             justify-content: space-between;
             margin-top: 30px;
         }
-        .buttons button {
-            padding: 10px 20px;
-            border: none;
+        .btn {
+            padding: 7px 28px;
             border-radius: 6px;
-            cursor: pointer;
+            border: none;
+            font-size: 1em;
             font-weight: bold;
+            cursor: pointer;
         }
-        .buttons .cancelar {
-            background-color: #e1d1f3;
-            color: #6f42c1;
+        .btn-cancelar {
+            background: #e5d6f7;
+            color: #6f3fd5;
         }
-        .buttons .voltar {
-            background-color: #eee;
+        .btn-voltar {
+            background: #e5d6f7;
+            color: #6f3fd5;
         }
-        .buttons .proximo {
-            background-color: #6f42c1;
-            color: white;
+        .btn-proximo {
+            background: #6f3fd5;
+            color: #fff;
         }
         .etapa {
             text-align: right;
-            font-size: 0.9em;
+            font-size: 0.92em;
             color: #555;
+            margin-top: 10px;
         }
-        .input[type="number"] {
-            width: 50px;
-            padding: 5px;
-            font-size: 1em;
+        /* Estilo para os labels acima dos campos fixos */
+        .label-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2px;
         }
+        .label-group label {
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
 <form class="container">
-<h2>Avaliação Embrapa [ano atual]</h2>
+    <div class="header">Avaliação Embrapa [ano atual]</div>
+    <div class="label-group">
+        <label for="nome">Nome do pesquisador:</label>
+        <label for="matricula">Matrícula:</label>
+    </div>
     <div class="row">
-        <div class="label-input">
-            <label>Nome do pesquisador:</label>
-            <input type="text" name="pesquisador" value="Fulaninho de Tal da Silva Barreto">
-        </div>
-        <div class="label-input">
-            <label>Matrícula:</label>
-            <input type="number" name="matricula" value="356487">
-        </div>
+        <span class="fixed-field" id="nome">Fulaninho de Tal da Silva Barreto</span>
+        <span class="fixed-field-short" id="matricula">356487</span>
     </div>
+
 {% block content %} {% endblock %}
-    <div class="buttons">
-        <button type="button" class="cancelar">Cancelar</button>
-        <button type="button" class="voltar">Voltar</button>
-        <button type="submit" class="proximo">Próximo</button>
+
+    <div class="footer">
+        <div style="float: left">
+            <button class="btn btn-cancelar">Cancelar</button>
+        </div>
+        <div style="float: right">
+            <button class="btn btn-voltar">Voltar</button>
+            <button class="btn btn-proximo">Próximo</button>
+        </div>
     </div>
-    <div class="etapa">Etapa 1/3</div>
+{% block etapa %} {% endblock %}
+
 </form>
 </body>
 </html>

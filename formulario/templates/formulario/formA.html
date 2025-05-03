@@ -1,0 +1,60 @@
+{% extends 'formulario/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="align-items: center">
+        <div class="subtitle">PARTE A - COMPETÊNCIAS COMPORTAMENTAIS</div>
+        <button class="btn-metricas">Consultar métricas avaliativas</button>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div class="parametro">
+        <div class="parametro-title">Visão Sistêmica do Trabalho</div>
+        <div class="parametro-desc">
+            • Empregado atua de forma sistêmica no trabalho, considerando os pontos de integração entre as entregas sob sua responsabilidade; a estratégia organizacional (missão, visão, valores, objetivos estratégicos, desafios de inovação, metas); o ambiente interno e externo da Unidade/Embrapa em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.
+        </div>
+        <div class="radio-group">
+            {% include "./input_types/_selecao_multipla.html" with field_name="visao_sistemica" %}
+        </div>
+    </div>
+    <div class="parametro">
+        <div class="parametro-title">Visão Analítica de Dados</div>
+        <div class="parametro-desc">
+            • Empregado qualifica dados e informações dos ambientes internos e externos à Unidade ou à Embrapa de forma a contribuir com o planejamento, a gestão ou a execução de estratégias, projetos ou processos da Embrapa.
+        </div>
+        <div class="radio-group">
+            {% include "./input_types/_selecao_multipla.html" with field_name="visao_analitica" %}
+        </div>
+    </div>
+    <div class="parametro">
+        <div class="parametro-title">Foco em Planejamento do Trabalho</div>
+        <div class="parametro-desc">
+            • Empregado planeja estratégias, projetos ou processos sob sua responsabilidade em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.
+        </div>
+        <div class="radio-group">
+            {% include "./input_types/_selecao_multipla.html" with field_name="foco_planejamento" %}
+        </div>
+    </div>
+    <div class="parametro">
+        <div class="parametro-title">Orientação para Mudanças</div>
+        <div class="parametro-desc">
+            • Empregado se adapta à realidade dinâmica do contexto de trabalho e das entregas sob sua responsabilidade, desempenhando novos papéis e propondo.
+        </div>
+        <div class="radio-group">
+            {% include "./input_types/_selecao_multipla.html" with field_name="orientacao_mudancas" %}
+        </div>
+    </div>
+    <div class="parametro">
+        <div class="parametro-title">Relações de Colaboração no Trabalho</div>
+        <div class="parametro-desc">
+            • Empregado se comporta com cooperação, colaboração e solidariedade nos ambientes da Empresa e nas relações com parceiros. Entrega resultados colaborativamente, demonstra respeito com os demais presentes nos ambientes da Empresa e na relação com parceiros e compartilha recursos e informações com os demais empregados da Unidade.
+        </div>
+        <div class="radio-group">
+            {% include "./input_types/_selecao_multipla.html" with field_name="relacao_colaboracao" %}
+        </div>
+    </div>
+
+{% endblock %}
+{% block etapa %}
+<div class="etapa">Etapa 1/3</div>
+{% endblock %}

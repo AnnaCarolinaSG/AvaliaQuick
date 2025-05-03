@@ -1,0 +1,162 @@
+{% extends 'formulario/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div style="align-items: center">
+        <div class="subtitle">PARTE B - ENGAJAMENTO COM O TRABALHO</div>
+        <button class="btn-metricas">Consultar métricas avaliativas</button>
+        <div style="clear: both;"></div>
+    </div>
+
+    <div>
+        <h4>B1 - Representação Organizacional - Tipos de Representação</h4>
+        <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
+    </div>
+
+    <div style="justify-content: right; display: flex;">
+        <p style="font-size: 12px;">Quantidade</p>
+    </div>
+
+
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            • Presidente/Secretário, de Comitê/Comissão internos da Embrapa
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Membro de Comitê/Comissão/ Grupo de trabalho interno da Embrapa (máximo 2)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="membro_comite" max=2 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Presidente de portfólio, Programa, Comitê de assessoramento à DE (ou nova figura programática definida pela DEPI com anuência prévia do colegiado de gestoras da UD)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_portifolio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Membro de portfólio, Programa, Comitê de assessoramento à DE (ou nova figura programática definida pela DEPI com anuência prévia do colegiado de gestoras da UD)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="membro_portifolio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Divulgação na mídia (impressa, audiovisual) de informações ou resultados de PD&I relacionados a projetos registrados no SEG e que sejam objetos a partir release da Embrapa ou atendendo a imprensa – somente uma vez por matéria
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="divulgacao_midea" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atuação na formulação de políticas públicas comprovada por notas técnicas desde que a contribuição tenha sido objeto de indicação ou anuência prévia do colegiado de gestoras da UD
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="formulacao_politicas" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atuação como palestrante e ou disciplina de pós (aula de pós-graduação contará como palestra sendo considerada uma disciplina/semestre)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="palestrante_disciplina_pos" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Parcerias com unidades da Embrapa registrados no IDEARE e válido para equipe do projeto durante a execução do mesmo
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="parcerias_embrapa" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Parcerias com Instituições de Ciência e tecnologia, empresas nacionais ou internacionais, ONGs e demais entes com parceria formalmente constituída mediante ACT, registradas no IDEARE e válido para a equipe do projeto durante a duração do projeto
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="parcerias_instituicoes" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Responsável ou membro de equipe técnica responsável por laboratório, campo experimental, unidade de observação demonstrativa, unidade de referência tecnológica
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Responsável ou membro de equipe técnica responsável por Ações Gerenciais Locais
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="acoes_gerenciais_locais" max=10 %}
+        </div>
+    </div>
+
+    <!--=============================================================================================================== -->
+
+    <div>
+        <h4 style="margin-top: 60px">B2 - Treinamento e capacitações realizadas pelo pesquisador</h4>
+        <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
+    </div>
+
+    <div style="justify-content: right; display: flex;">
+        <p style="font-size: 12px;">Selecionar</p>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 10px">
+        <div class="parametro-desc">
+            • Duas ou mais capacitações e ou treinamentos realizados pelo pesquisador
+        </div>
+        <div class="coluna_quantidade" style="margin-right: 20px">
+            {% include "./input_types/_selecao_unica.html" with field_name="treinamentos_capacitacoes" value=2 selected_value=selected_value %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Uma capacitação e ou treinamento realizada pelo pesquisador
+        </div>
+        <div class="coluna_quantidade" style="margin-right: 20px">
+            {% include "./input_types/_selecao_unica.html" with field_name="treinamentos_capacitacoes" value=1 selected_value=selected_value %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Capacitação não realizada
+        </div>
+        <div class="coluna_quantidade" style="margin-right: 20px">
+            {% include "./input_types/_selecao_unica.html" with field_name="treinamentos_capacitacoes" value=0 selected_value=selected_value %}
+        </div>
+    </div>
+
+
+{% endblock %}
+{% block etapa %}
+<div class="etapa">Etapa 2/3</div>
+{% endblock %}
