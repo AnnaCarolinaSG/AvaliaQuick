@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Page 500 {% endblock %} 
+{% block title %} Page 403 {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -11,15 +11,16 @@
         <div class="col-md-12">
             <div class="card card-profile">
                 <div class="card-body">
-                    <h6 class="card-category text-gray">Error 500</h6>
+                    <h6 class="card-category text-gray">Error 403</h6>
                     <h4 class="card-title">
-                        Internal Server Error
+                        Acesso negado - Por favor, faça o login
                     </h4>
-                    <a href="/" class="btn btn-primary btn-round">Home</a>
+                    <a href="{% url 'login' %}" class="btn btn-primary btn-round">LOGIN</a>
                 </div>
             </div>
         </div>
     </div>
+
 
 {% endblock content %}
 

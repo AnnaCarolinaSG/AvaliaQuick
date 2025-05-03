@@ -5,114 +5,203 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #ccc;
-        }
-        .container {
-            display: flex;
-            max-width: 900px;
-            margin: auto;
-            background-color: #888;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .tabs {
-            display: flex;
-            flex-direction: column;
-            width: 250px;
-            background-color: #666;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        .tab-button {
-            background: #bbb;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: left;
-            border-radius: 5px;
-        }
-        .tab-button.active {
-            background: #ddd;
-        }
-        .content {
-            flex-grow: 1;
-            background: #bbb;
-            padding: 20px;
-            border-radius: 10px;
-            margin-left: 20px;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-    </style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 40px;
+        background-color: #f0f2f5;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    .tab-header {
+        display: flex;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .tab-button {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 12px 10px;
+        cursor: pointer;
+        font-weight: bold;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+    .tab-button:hover {
+        background-color: #f9f9f9;
+    }
+
+    .tab-button.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content h3 {
+        margin-top: 0;
+        color: #444;
+    }
+
+    .tab-content p {
+        margin: 8px 0;
+        color: #333;
+    }
+
+    .tab-content a {
+        color: #7b2cbf;
+        text-decoration: none;
+    }
+
+    .tab-content a:hover {
+        text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
 {% endblock stylesheets %}
 
 {% block content %}
 
-    <h2>Avaliação Fevereiro/Março 2025 - ano de 2024</h2>
+<h2>Avaliação Fevereiro/Março 2025 - ano de 2024</h2>
 
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
-            <button class="tab-button" onclick="openTab('prontos')">Prontos para Avaliação</button>
-            <button class="tab-button" onclick="openTab('pendentes')">Envios Pendentes</button>
-            <button class="tab-button" onclick="openTab('finalizadas')">Avaliações Finalizadas</button>
-            <button class="tab-button" onclick="openTab('final')">Avaliação Final</button>
-        </div>
-
-        <div class="content">
-            <div id="info" class="tab-content active">
-                <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
-                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> 14</p>
-                <p><strong>ENVIOS PENDENTES:</strong> 3</p>
-                <p><strong>AVALIAÇÕES EM ESPERA:</strong> 14</p>
-                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> 0</p>
-                <p><strong>PESQUISADORES AVALIADOS:</strong> 0</p>
-                <p><strong>MÉDIA FINAL:</strong> 0</p>
-            </div>
-
-            <div id="prontos" class="tab-content">
-                <h3>Prontos para Avaliação</h3>
-                <p>Conteúdo sobre os itens prontos para avaliação.</p>
-            </div>
-
-            <div id="pendentes" class="tab-content">
-                <h3>Envios Pendentes</h3>
-                <p>Lista de envios ainda não avaliados.</p>
-            </div>
-
-            <div id="finalizadas" class="tab-content">
-                <h3>Avaliações Finalizadas</h3>
-                <p>Detalhes das avaliações já concluídas.</p>
-            </div>
-
-            <div id="final" class="tab-content">
-                <h3>Avaliação Final</h3>
-                <p>Resumo final da avaliação.</p>
-            </div>
-        </div>
+<div class="container">
+    <div class="tab-header">
+        <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
+        <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
+        <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+        <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
+        <button class="tab-button" onclick="openTab('final')">AVALIAÇÃO FINAL</button>
     </div>
 
-    <script>
-        function openTab(tabId) {
-            // Remove a classe 'active' de todos os botões e conteúdos
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    <div id="info" class="tab-content active">
+        <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
+        <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> 14</p>
+        <p><strong>ENVIOS PENDENTES:</strong> 3</p>
+        <p><strong>AVALIAÇÕES EM ESPERA:</strong> 14</p>
+        <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> 0</p>
+        <p><strong>PESQUISADORES AVALIADOS:</strong> 0</p>
+        <p><strong>MÉDIA FINAL:</strong> 0</p>
+    </div>
 
-            // Ativa o botão e o conteúdo correspondente
-            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
-    </script>
+    <div id="prontos" class="tab-content">
+        <div id="prontos" class="tab-content active">
+        <!-- Lista de Avaliações -->
+        <div id="lista-avaliacoes">
+            <h2><strong><em>Prontos para avaliação</em></strong></h2>
+            {% for avaliacao in avaliacoes %}
+            <div class="avaliacao-card">
+                <div class="avaliacao-data">
+                    <span>{{ avaliacao.hora }}aaaaa</span><br>
+                    <span>{{ avaliacao.data }}aaaaa</span>
+                </div>
+                <div class="avaliacao-info">
+                    <strong><em>{{ pesquisador.nome }}</em></strong><br>
+                    <span>{{ pesquisador.email }}</span>
+                </div>
+                <div class="avaliacao-botoes">
+                    <button class="btn" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver arquivos</button>
+                    <a href="{% url 'formA' pesquisador.id %}" class="btn avaliar">Avaliar</a>
+                </div>
+            </div>
+            {% empty %}
+                <p>Nenhuma avaliação disponível no momento.</p>
+            {% endfor %}
+        </div>
+
+        <!-- Detalhe dos Arquivos (inicialmente oculto) -->
+        <div id="detalhe-arquivos" style="display: none;">
+            <h3><em id="nome-pesquisador"></em></h3>
+
+            <div class="arquivo-grupo">
+                <p><em>Arquivos tipo 1</em></p>
+                <div class="arquivo-item">
+                    <span>📄 <strong>Arquivo 1</strong><br>.pdf - 23 Mb</span>
+                    <div class="arquivo-botoes">
+                        <button class="btn">Visualizar</button>
+                        <button class="btn">Baixar ⬇️</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="arquivo-grupo">
+                <p><em>Arquivos tipo 2</em></p>
+                <div class="arquivo-item">
+                    <span>📄 <strong>Arquivo 2</strong><br>.pdf - 12 Mb</span>
+                    <div class="arquivo-botoes">
+                        <button class="btn">Visualizar</button>
+                        <button class="btn">Baixar ⬇️</button>
+                    </div>
+                </div>
+
+                <div class="arquivo-item">
+                    <span>📄 <strong>Arquivo 3</strong><br>.pdf - 45 Mb</span>
+                    <div class="arquivo-botoes">
+                        <button class="btn">Visualizar</button>
+                        <button class="btn">Baixar ⬇️</button>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="voltarLista()">Voltar</button>
+        </div>
+    </div>
+    </div>
+
+    <div id="pendentes" class="tab-content">
+        <h3>Envios Pendentes</h3>
+        <p>Lista de envios ainda não avaliados.</p>
+    </div>
+
+    <div id="finalizadas" class="tab-content">
+        <h3>Avaliações Finalizadas</h3>
+        <p>Detalhes das avaliações já concluídas.</p>
+    </div>
+
+    <div id="final" class="tab-content">
+        <h3>Avaliação Final</h3>
+        <p>Resumo final da avaliação.</p>
+    </div>
+</div>
+
+<script>
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+
 
 {% endblock content %}
 
@@ -125,6 +214,16 @@
       md.initDashboardPageCharts();
 
     });
+
+    function mostrarArquivos() {
+        document.getElementById('lista-avaliacoes').style.display = 'none';
+        document.getElementById('detalhe-arquivos').style.display = 'block';
+    }
+
+    function voltarParaPrincipal() {
+        document.getElementById('lista-avaliacoes').style.display = 'none';
+        document.getElementById('conteudoPrincipal').style.display = 'block';
+    }
   </script>
 
 {% endblock javascripts %}
