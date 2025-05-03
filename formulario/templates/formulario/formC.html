@@ -22,7 +22,7 @@
             <p>• Elaboração de Notas Técnicas, Relatórios, Parecer ad-hoc de órgão de fomento, revista indexadas e documentos da série Embrapa. Atuação como Editor.</p>
             <p style="font-size: 14px; margin-top: -15px; font-style: italic;">A fonte de avaliação atribuirá uma nota, considerando os comprovantes da sua efetiva e incontestável participação na elaboração ou revisão ad-hoc.</p>
         </div>
-        <div class="coluna_quantidade">
+        <div class="coluna_quantidade" style="margin-top: -50px;">
             {% include "./input_types/_quantidade.html" with field_name="atuacao_editor" max=10 %}
         </div>
     </div>
@@ -32,32 +32,32 @@
             <p>• Elaboração de Normas, Notas Técnicas, Relatórios, Memorandos, Pareceres com clareza, coesão e coerência de ideias.</p>
             <p style="font-size: 14px; margin-top: -15px; font-style: italic;"> A fonte de avaliação atribuirá uma nota ao empregado, considerando os relatos, registrados, durante o ano, no IDEARE.</p>
         </div>
-        <div class="coluna_quantidade">
+        <div class="coluna_quantidade" style="margin-top: -30px;">
             {% include "./input_types/_quantidade.html" with field_name="clareza_coezao" max=2 %}
         </div>
     </div>
 
     <!-- ================================================================================================ -->
 
-    <div>
+    <div style="margin-top: 40px;">
         <h4>C2 - Participação na gestão de contratos e convênios</h4>
         <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
+    <div class="parametro_quant" style="margin-top: 30px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px; margin-left: 35px;">
             {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=2 selected_value=selected_value id="gestor_contratos_2" %}
         </div>
         <div class="parametro-desc" style="margin-right: -30px">
             R$
         </div>
-        <div>
+        <div style="margin-left: 5px">
             {% include "./input_types/_input_text.html" with field_name="valor_gestor_contratos" %}
         </div>
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px; margin-left: 35px;">
             {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=1 selected_value=selected_value id="gestor_contratos_1" %}
         </div>
         <div class="parametro-desc">
@@ -65,8 +65,8 @@
         </div>
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left;">
+        <div class="coluna_quantidade" style="margin-right: -30px; margin-left: 35px;">
             {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
         </div>
         <div class="parametro-desc">
@@ -74,7 +74,260 @@
         </div>
     </div>
 
+    <!-- ============================================================================================================ -->
 
+    <div style="margin-top: 50px;">
+        <h4>C3 - Ações Técnicas em PDI, TT e Publicações Técnicas e Técnico-Científicas</h4>
+        <h5 style="margin-top: -20px;margin-bottom: -5px">(comprovantes entregues ou em sistemas corporativos)</h5>
+    </div>
+
+    <div class="parametro-title" style="margin-top: 30px; text-decoration: underline; font-style: italic">
+        <h4>Item A - Participação em projetos de PD&I </h4>
+    </div>
+
+    <div class="parametro-desc" style="text-decoration: underline; margin-bottom: 20px">
+            • Participação em Projetos SEG
+    </div>
+
+    <div style="justify-content: right; display: flex; margin-top: -25px;">
+        <p style="font-size: 12px;">Quantidade</p>
+    </div>
+
+
+    <div class="parametro_quant" style="margin-top: -5px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Liderança de Projetos
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-left: 35px;">
+        <div class="parametro-desc">
+            • Responsável por Solução e/ou Contribuição para Inovação
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="membro_comite" max=2 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-left: 35px;">
+        <div class="parametro-desc">
+            • Responsável por atividade
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_portifolio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro-desc" style="text-decoration: underline; margin-bottom: 30px; margin-top: 40px">
+        • Desenvolvimento de ativos tecnológicos
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 10px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
+            Participa do processo de qualificação dos ativos tecnológicos entregues como resultados em escalas TRLs 4,0 a 8,0 (comprovado pela CHTT)
+        </div>
+    </div>
+
+    <div class="parametro-desc" style="text-decoration: underline; margin-bottom: 20px; margin-top: 40px">
+        • Articulação e captação de recursos externos e internos
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
+            Coordena a articulação e elaboração de propostas de projetos, a serem submetidos em chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
+            Membro de propostas de projetos a serem submetidos a editais de chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
+            Recursos financeiros comprovados como receita indireta da unidade (com comprovação junto ao SOF/NAP)
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=2 selected_value=selected_value id="gestor_contratos_2" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: -30px; margin-left: 15px;">
+            R$
+        </div>
+        <div style="margin-left: 5px">
+            {% include "./input_types/_input_text.html" with field_name="valor_gestor_contratos" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: -25px;">
+            Valor total captado (Participação em projetos PD&I)
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 20px; justify-content: left; margin-left: 35px;">
+        <div class="coluna_quantidade" style="margin-right: -30px">
+            {% include "./input_types/_selecao_unica.html" with field_name="gestor_contratos" value=0 selected_value=selected_value id="gestor_contratos_0" %}
+        </div>
+        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
+            Sem captação
+        </div>
+    </div>
+    <!-- ----------------------------------------------------------- -->
+
+    <div class="parametro-title" style="margin-top: 30px; text-decoration: underline; font-style: italic">
+        <h4>Item B - Participação em ações de transferência de conhecimento, inovação e tecnologia</h4>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua na organização ou participação (exclusivamente como instrutor) em eventos técnico-científicos, de capacitação, formação, transferência de conhecimento, inovação e tecnologia Ex: workshops, simpósios, congressos, seminários, capacitações, cursos e dias de campo (Registrados no AGE como responsável ou demandante)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua na apresentação de tecnologias da Embrapa em eventos internos e/ou externos (Registrados no AGE)
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua como responsável por cursos de capacitação no modelo EAD EM ANDAMENTO, lançado pela Agrobiologia- comprovado pela equipe do setor de TT        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua como revisor de cursos de capacitação no modelo EAD já estruturados pela Agrobiologia e a serem lançados- comprovado pela CHTT
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua como membro de cursos de capacitação no modelo EAD lançados por outras unidades da Embrapa e com comprovação da CHTT da unidade responsável pelo curso
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant">
+        <div class="parametro-desc">
+            • Atua como coordenador e ou conteudista NOVOS de cursos de capacitação no modelo EAD a ser lançado pela Agrobiologia - comprovado pela equipe do setor de TT
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="responsavel_laboratorio" max=10 %}
+        </div>
+    </div>
+
+    <!-- ----------------------------------------------------------- -->
+
+    <div class="parametro-title" style="margin-top: 30px; text-decoration: underline; font-style: italic">
+        <h4>Item C - Publicações Técnicas e Técnico-Científicas</h4>
+    </div>
+
+    <div style="justify-content: right; display: flex; margin-top: -25px;">
+        <p style="font-size: 12px;">Quantidade</p>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 0px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Artigo Publicado em periódico - A1
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Artigo Publicado em periódico - A2, A3 e A4
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Artigo Publicado em periódico - B1 e B2
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Artigo Publicado em periódico - B3 ou inferior
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Publicação de produções técnicas da Embrapa: Boletim de pesquisa, Circular Técnica, Comunicado Técnico e Série Documentos
+        </div>
+        <div class="coluna_quantidade" style="margin-top: -10px;">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top:15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Elaboração de capítulo de livros
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Organização/Edição de livros
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
+
+    <div class="parametro_quant" style="margin-top: 15px; margin-left: 35px;">
+        <div class="parametro-desc">
+            • Artigos e resumos publicados em anais de eventos científicos;
+        </div>
+        <div class="coluna_quantidade">
+            {% include "./input_types/_quantidade.html" with field_name="presidente_comite" max=10 %}
+        </div>
+    </div>
 
 {% endblock %}
 {% block etapa %}
