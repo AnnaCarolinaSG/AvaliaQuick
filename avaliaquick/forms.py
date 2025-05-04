@@ -1,0 +1,27 @@
+from symtable import Class
+
+from django import forms
+from .models import Pesquisador
+
+class FormularioPesquisador(forms.ModelForm):
+    class Meta:
+        model = Pesquisador
+        fields = '__all__'
+        widgets = {
+            'nome': forms.TextInput(attrs={
+                'placeholder': 'Digite o nome do Pesquisador'
+            }),
+            'matricula': forms.NumberInput(attrs={
+                'placeholder': 'Digite a matrícula do Pesquisador'
+            }),
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Digite o email do Pesquisador'
+            }),
+        }
+
+    def clean_matricula(self):
+        matricula = self.cleaned_data['matricula']
+        if Pesquisador.objects.filter(matricula=matricula).exists():
+            raise forms.ValidationError("Já existe um pesquisador com essa matrícula.")
+        return matricula
+

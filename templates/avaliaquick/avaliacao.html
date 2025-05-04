@@ -81,9 +81,66 @@
         text-decoration: underline;
     }
 
+    #detalhe-arquivos {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    #lista-avaliacoes {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+    .avaliacao-card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .avaliacao-data, .avaliacao-info {
+        line-height: 1.6;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #eee;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .avaliacao-info em {
+        font-style: italic;
+        font-weight: bold;
+    }
+
+    .avaliacao-botoes {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #666;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .btn.avaliar {
+        background-color: #7b2cbf;
     }
 </style>
 
@@ -104,34 +161,35 @@
 
     <div id="info" class="tab-content active">
         <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
-        <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> 14</p>
-        <p><strong>ENVIOS PENDENTES:</strong> 3</p>
-        <p><strong>AVALIAÇÕES EM ESPERA:</strong> 14</p>
-        <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> 0</p>
-        <p><strong>PESQUISADORES AVALIADOS:</strong> 0</p>
+        <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
+        <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
+        <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
+        <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
+        <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
         <p><strong>MÉDIA FINAL:</strong> 0</p>
     </div>
 
     <div id="prontos" class="tab-content">
-        <div id="prontos" class="tab-content active">
         <!-- Lista de Avaliações -->
         <div id="lista-avaliacoes">
             <h2><strong><em>Prontos para avaliação</em></strong></h2>
             {% for avaliacao in avaliacoes %}
-            <div class="avaliacao-card">
-                <div class="avaliacao-data">
-                    <span>{{ avaliacao.hora }}aaaaa</span><br>
-                    <span>{{ avaliacao.data }}aaaaa</span>
-                </div>
-                <div class="avaliacao-info">
-                    <strong><em>{{ pesquisador.nome }}</em></strong><br>
-                    <span>{{ pesquisador.email }}</span>
-                </div>
-                <div class="avaliacao-botoes">
-                    <button class="btn" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver arquivos</button>
-                    <a href="{% url 'formA' pesquisador.id %}" class="btn avaliar">Avaliar</a>
-                </div>
-            </div>
+                {% if avaliacao.arquivos and avaliacao.status == 'PEN' or avaliacao.status == 'AND' %}
+                    <div class="avaliacao-card">
+                        <div class="avaliacao-data">
+                            <span>{{ avaliacao.data_hora|date:"H:i" }}</span><br>
+                            <span>{{ avaliacao.data_hora|date:"d/m/Y" }}</span>
+                        </div>
+                        <div class="avaliacao-info">
+                            <strong><em>{{ avaliacao.pesquisador.nome }}</em></strong><br>
+                            <span>{{ avaliacao.pesquisador.email }}</span>
+                        </div>
+                        <div class="avaliacao-botoes">
+                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Avaliar</button>
+                            <button class="btn" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver arquivos</button>
+                        </div>
+                    </div>
+                {% endif %}
             {% empty %}
                 <p>Nenhuma avaliação disponível no momento.</p>
             {% endfor %}
@@ -171,24 +229,74 @@
                 </div>
             </div>
 
-            <button class="btn" onclick="voltarLista()">Voltar</button>
+            <button class="btn" onclick="voltarParaPrincipal()">Voltar</button>
         </div>
-    </div>
     </div>
 
     <div id="pendentes" class="tab-content">
-        <h3>Envios Pendentes</h3>
-        <p>Lista de envios ainda não avaliados.</p>
+        <div id="lista-pendentes">
+            <h2><strong><em>Envios Pendentes</em></strong></h2>
+            {% for avaliacao in avaliacoes %}
+                {% if not avaliacao.arquivos %}
+                    <div class="avaliacao-card">
+                        <div class="avaliacao-info">
+                            <strong><em>{{ avaliacao.pesquisador.nome }}</em></strong><br>
+                            <span>{{ avaliacao.pesquisador.email }}</span>
+                        </div>
+                        <div class="avaliacao-botoes">
+                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Solicitar Novamente</button>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>Nenhuma avaliação disponível no momento.</p>
+            {% endfor %}
+        </div>
     </div>
 
     <div id="finalizadas" class="tab-content">
-        <h3>Avaliações Finalizadas</h3>
-        <p>Detalhes das avaliações já concluídas.</p>
+        <div id="lista-finalizados">
+            <h2><strong><em>Avaliações Finalizadas</em></strong></h2>
+            {% for avaliacao in avaliacoes %}
+                {% if avaliacao.status == 'FIN' %}
+                    <div class="avaliacao-card">
+                        <div class="avaliacao-info">
+                            <strong><em>{{ avaliacao.pesquisador.nome }}</em></strong><br>
+                            <span>{{ avaliacao.pesquisador.email }}</span>
+                        </div>
+                        <div class="avaliacao-botoes">
+                            <H4>FINALIZADO</H4>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>Nenhuma avaliação disponível no momento.</p>
+            {% endfor %}
+        </div>
     </div>
 
     <div id="final" class="tab-content">
-        <h3>Avaliação Final</h3>
-        <p>Resumo final da avaliação.</p>
+        <div id="lista-final">
+            <h2><strong><em>Avaliação Final</em></strong></h2>
+            {% for avaliacao in avaliacoes %}
+                {% if avaliacao.status == 'FIN' %}
+                    <div class="avaliacao-card">
+                        <div class="avaliacao-info">
+                            <strong><em>{{ avaliacao.pesquisador.nome }}</em></strong><br>
+                            <span>{{ avaliacao.pesquisador.email }}</span>
+                        </div>
+                        <div class="avaliacao-info">
+                            <strong><em>Nota Final: 8,74</em></strong><br>
+                        </div>
+                        <div class="avaliacao-botoes">
+                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver Mais</button>
+                        </div>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <p>Nenhuma avaliação disponível no momento.</p>
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -221,8 +329,8 @@
     }
 
     function voltarParaPrincipal() {
-        document.getElementById('lista-avaliacoes').style.display = 'none';
-        document.getElementById('conteudoPrincipal').style.display = 'block';
+        document.getElementById('lista-avaliacoes').style.display = 'block';
+        document.getElementById('detalhe-arquivos').style.display = 'none';
     }
   </script>
 

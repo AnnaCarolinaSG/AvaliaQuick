@@ -162,10 +162,15 @@
             font-weight: bold;
         }
 
+        div#id_visao_sistemica{
+            display: flex;
+            flex-direction: row;
+        }
+
     </style>
 </head>
 <body>
-<form class="container" method="post">
+<form class="container formulario" method="post">
 {% csrf_token %}
     <div class="header">Avaliação Embrapa [ano atual]</div>
     <div class="label-group">

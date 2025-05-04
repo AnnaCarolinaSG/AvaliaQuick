@@ -5,114 +5,301 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #ccc;
-        }
-        .container {
-            display: flex;
-            max-width: 900px;
-            margin: auto;
-            background-color: #888;
-            padding: 20px;
-            border-radius: 10px;
-        }
-        .tabs {
-            display: flex;
-            flex-direction: column;
-            width: 250px;
-            background-color: #666;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        .tab-button {
-            background: #bbb;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: left;
-            border-radius: 5px;
-        }
-        .tab-button.active {
-            background: #ddd;
-        }
-        .content {
-            flex-grow: 1;
-            background: #bbb;
-            padding: 20px;
-            border-radius: 10px;
-            margin-left: 20px;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-    </style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 40px;
+        background-color: #f0f2f5;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    .tab-header {
+        display: flex;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content h3 {
+        margin-top: 0;
+        color: #444;
+    }
+
+    .tab-content p {
+        margin: 8px 0;
+        color: #333;
+    }
+
+    .tab-content a {
+        color: #7b2cbf;
+        text-decoration: none;
+    }
+
+    .tab-content a:hover {
+        text-decoration: underline;
+    }
+
+    #form-pesquisadores {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    #lista-pesquisadores {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn2 {
+    from {opacity: 0; transform: translateY(-10px); }
+    to {opacity: 1; transform: translateY(0); }
+}
+    .avaliacao-card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .avaliacao-data, .avaliacao-info {
+        line-height: 1.6;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #eee;
+        padding: 20px;
+        border-radius: 10px;
+        flex: 1;
+        min-height: 100px;
+    }
+
+    .avaliacao-info em {
+        font-style: italic;
+        font-weight: bold;
+    }
+
+    .avaliacao-botoes {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        flex: 1;
+        min-height: 100px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #666;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .btn.avaliar {
+        background-color: #7b2cbf;
+    }
+
+    .tab-button-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .tab-button-titulo {
+        width: 100%;
+    }
+
+    .btn-adicionar {
+        margin: 0;
+        border: none;
+        bottom: 0;
+        right: 0;
+        background-color: #0a6ebd;
+        z-index: 1;
+        padding: 12px 10px;
+        font-size: 12px;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .btn-adicionar.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .tab-button-titulo {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 12px 10px;
+        font-weight: bold;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .tab-button-titulo.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+    }
+
+    .meu-formulario {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .meu-formulario p {
+        margin-bottom: 15px;
+    }
+
+    .meu-formulario input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .meu-formulario label {
+        color: #000;
+    }
+
+    .alert {
+        position: relative;
+        padding-right: 20px; /* Para o "x" não se sobrepor ao texto */
+    }
+
+    .alert .close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: transparent;
+        border: none;
+        font-size: 30px;
+        color: #000;
+        cursor: pointer;
+    }
+</style>
+
 {% endblock stylesheets %}
 
 {% block content %}
 
-    <h2>Avaliação Fevereiro/Março 2025 - ano de 2024</h2>
+<h2>Pesquisadores</h2>
 
-    <div class="container">
-        <div class="tabs">
-            <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
-            <button class="tab-button" onclick="openTab('prontos')">Prontos para Avaliação</button>
-            <button class="tab-button" onclick="openTab('pendentes')">Envios Pendentes</button>
-            <button class="tab-button" onclick="openTab('finalizadas')">Avaliações Finalizadas</button>
-            <button class="tab-button" onclick="openTab('final')">Avaliação Final</button>
-        </div>
-
-        <div class="content">
-            <div id="info" class="tab-content active">
-                <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
-                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> 14</p>
-                <p><strong>ENVIOS PENDENTES:</strong> 3</p>
-                <p><strong>AVALIAÇÕES EM ESPERA:</strong> 14</p>
-                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> 0</p>
-                <p><strong>PESQUISADORES AVALIADOS:</strong> 0</p>
-                <p><strong>MÉDIA FINAL:</strong> 0</p>
-            </div>
-
-            <div id="prontos" class="tab-content">
-                <h3>Prontos para Avaliação</h3>
-                <p>Conteúdo sobre os itens prontos para avaliação.</p>
-            </div>
-
-            <div id="pendentes" class="tab-content">
-                <h3>Envios Pendentes</h3>
-                <p>Lista de envios ainda não avaliados.</p>
-            </div>
-
-            <div id="finalizadas" class="tab-content">
-                <h3>Avaliações Finalizadas</h3>
-                <p>Detalhes das avaliações já concluídas.</p>
-            </div>
-
-            <div id="final" class="tab-content">
-                <h3>Avaliação Final</h3>
-                <p>Resumo final da avaliação.</p>
-            </div>
+<div class="container">
+    <div class="tab-header">
+        <div class="tab-button-wrapper">
+            <button class="tab-button-titulo active" onclick="openTab('pesquisadores')" disabled>
+                Lista de Pesquisadores
+            </button>
+            <button id="btn-adicionar" style="border-bottom-left-radius: 0;" class="btn btn-adicionar fecha" onclick="formularioPesquisadores()">
+                +Adicionar Pesquisador
+            </button>
         </div>
     </div>
 
-    <script>
-        function openTab(tabId) {
-            // Remove a classe 'active' de todos os botões e conteúdos
-            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    {% if messages %}
+        <div class="feedback-messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-            // Ativa o botão e o conteúdo correspondente
-            document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
-    </script>
+    <div id="lista-pesquisadores">
+        {% for pesquisador in pesquisadores %}
+            <div class="avaliacao-card">
+                <div class="avaliacao-data">
+                    <span>{{ pesquisador.nome }}</span>
+                </div>
+                <div class="avaliacao-info">
+                    <strong><em>{{ pesquisador.matricula }}</em></strong><br>
+                    <span>{{ pesquisador.email }}</span>
+                </div>
+                <div class="avaliacao-botoes">
+                    <button class="btn avaliar">Editar</button>
+                    <button class="btn">Remover</button>
+                </div>
+            </div>
+        {% empty %}
+            <p>Nenhum pesquisador cadastrado.</p>
+        {% endfor %}
+    </div>
+
+    <div id="form-pesquisadores"  style="display: none;">
+        <div id="pesquisadores" class="tab-content active">
+
+            <form method="post" class="meu-formulario">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button onclick="mostrarPesquisadores()" class="btn">Voltar</button>
+                <button type="submit" class="btn">Enviar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Fechar a mensagem ao clicar no "x"
+        const closeButtons = document.querySelectorAll('.alert .close .fecha .btn-adicionar');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const alert = this.closest('.alert');
+                alert.style.display = 'none';
+            });
+        });
+    });
+
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+
 
 {% endblock content %}
 
@@ -125,6 +312,18 @@
       md.initDashboardPageCharts();
 
     });
+
+    function mostrarPesquisadores() {
+        document.getElementById('form-pesquisadores').style.display = 'none';
+        document.getElementById('lista-pesquisadores').style.display = 'block';
+        document.getElementById('btn-adicionar').style.display = 'block';
+    }
+
+    function formularioPesquisadores() {
+        document.getElementById('form-pesquisadores').style.display = 'block';
+        document.getElementById('lista-pesquisadores').style.display = 'none';
+        document.getElementById('btn-adicionar').style.display = 'none';
+    }
   </script>
 
 {% endblock javascripts %}
