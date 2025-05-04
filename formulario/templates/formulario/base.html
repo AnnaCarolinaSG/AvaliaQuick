@@ -111,6 +111,12 @@
         .radio-group {
             margin-top: 4px;
         }
+        #radios-inline {
+            display: inline-block;
+            flex-direction: row;
+            margin-right: 1em;
+            margin-top: 4px;
+        }
         .radio-group label {
             margin-right: 12px;
             font-size: 1em;
@@ -159,7 +165,8 @@
     </style>
 </head>
 <body>
-<form class="container">
+<form class="container" method="post">
+{% csrf_token %}
     <div class="header">Avaliação Embrapa [ano atual]</div>
     <div class="label-group">
         <label for="nome">Nome do pesquisador:</label>
@@ -178,7 +185,7 @@
         </div>
         <div style="float: right">
             <button class="btn btn-voltar">Voltar</button>
-            <button class="btn btn-proximo">Próximo</button>
+            <button class="btn btn-proximo" type="submit">Próximo</button>
         </div>
     </div>
 {% block etapa %} {% endblock %}

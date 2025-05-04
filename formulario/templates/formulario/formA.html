@@ -13,8 +13,8 @@
         <div class="parametro-desc">
             • Empregado atua de forma sistêmica no trabalho, considerando os pontos de integração entre as entregas sob sua responsabilidade; a estratégia organizacional (missão, visão, valores, objetivos estratégicos, desafios de inovação, metas); o ambiente interno e externo da Unidade/Embrapa em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.
         </div>
-        <div class="radio-group">
-            {% include "./input_types/_selecao_multipla.html" with field_name="visao_sistemica" %}
+        <div class="radios-inline">
+            {{ form.visao_sistemica }}
         </div>
     </div>
     <div class="parametro">
@@ -23,7 +23,7 @@
             • Empregado qualifica dados e informações dos ambientes internos e externos à Unidade ou à Embrapa de forma a contribuir com o planejamento, a gestão ou a execução de estratégias, projetos ou processos da Embrapa.
         </div>
         <div class="radio-group">
-            {% include "./input_types/_selecao_multipla.html" with field_name="visao_analitica" %}
+            {% include "./input_types/_selecao_multipla.html" with field_name="visao_analitica" field=form.visao_analitica value=visao_analitica %}
         </div>
     </div>
     <div class="parametro">
@@ -32,7 +32,7 @@
             • Empregado planeja estratégias, projetos ou processos sob sua responsabilidade em benefício da eficiência, eficácia e efetividade dos resultados organizacionais.
         </div>
         <div class="radio-group">
-            {% include "./input_types/_selecao_multipla.html" with field_name="foco_planejamento" %}
+            {% include "./input_types/_selecao_multipla.html" with field_name="foco_planejamento" field=form.foco_planejamento %}
         </div>
     </div>
     <div class="parametro">
@@ -41,7 +41,7 @@
             • Empregado se adapta à realidade dinâmica do contexto de trabalho e das entregas sob sua responsabilidade, desempenhando novos papéis e propondo.
         </div>
         <div class="radio-group">
-            {% include "./input_types/_selecao_multipla.html" with field_name="orientacao_mudancas" %}
+            {% include "./input_types/_selecao_multipla.html" with field_name="orientacao_mudancas" field=form.orientacao_mudancas %}
         </div>
     </div>
     <div class="parametro">
@@ -50,7 +50,7 @@
             • Empregado se comporta com cooperação, colaboração e solidariedade nos ambientes da Empresa e nas relações com parceiros. Entrega resultados colaborativamente, demonstra respeito com os demais presentes nos ambientes da Empresa e na relação com parceiros e compartilha recursos e informações com os demais empregados da Unidade.
         </div>
         <div class="radio-group">
-            {% include "./input_types/_selecao_multipla.html" with field_name="relacao_colaboracao" %}
+            {% include "./input_types/_selecao_multipla.html" with field_name="relacao_colaboracao" field=form.relacoes_colaboracao%}
         </div>
     </div>
 

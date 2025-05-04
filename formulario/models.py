@@ -2,7 +2,7 @@ from django.core.validators import integer_validator, MinValueValidator
 from django.db import models
 
 class Formulario_A(models.Model):
-    visao_sistemica = models.IntegerField(null=False, blank=False)
+    visao_sistemica = models.IntegerField(choices=[(i, str(i)) for i in range(5)], null=False, blank=False)
     visao_analitica = models.IntegerField(null=False, blank=False)
     foco_planejamento = models.IntegerField(null=False, blank=False)
     orientacao_mudancas = models.IntegerField(null=False, blank=False)
