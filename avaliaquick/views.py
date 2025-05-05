@@ -88,7 +88,7 @@ def avaliar_pesquisador(request, id):
         pendente.nota = random.randint(7, 10)
         pendente.save()
         messages.success(request, 'Pesquisador avaliado com sucesso!')
-    return redirect('avaliacao')
+    return redirect('inicio')
 
 def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':

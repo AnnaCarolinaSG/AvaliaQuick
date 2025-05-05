@@ -246,7 +246,10 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
-                            <button class="btn avaliar" onclick="mostrarArquivos({{ avaliacao.id }})">Avaliar</button>
+                            <form method="POST" action="{% url 'avaliar_pesquisador' avaliacao.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn avaliar">Avaliar</button>
+                            </form>
                             <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }})">Ver arquivos</button>
                         </div>
                     </div>
@@ -346,7 +349,7 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-info">
-                            <strong><em>Nota Final: 8,74</em></strong><br>
+                            <strong><em>Nota Final: {{ avaliacao.nota }}</em></strong><br>
                         </div>
                         <div class="avaliacao-botoes">
                             <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver Mais</button>
