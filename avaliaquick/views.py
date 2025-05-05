@@ -146,6 +146,16 @@ def perfil(request):
         raise PermissionDenied
     return render(request, 'avaliaquick/perfil.html')
 
+def editar_pesquisador(request, id):
+    pesquisador = get_object_or_404(Pesquisador, id=id)
+    if request.method == 'POST':
+        pesquisador.nome = request.POST.get('nome')
+        pesquisador.matricula = request.POST.get('matricula')
+        pesquisador.email = request.POST.get('email')
+        pesquisador.save()
+        messages.success(request, 'Pesquisador atualizado com sucesso!')
+    return redirect('lista_pesquisadores')
+
 def lista(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
