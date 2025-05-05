@@ -65,7 +65,7 @@
         animation: fadeIn 0.2s ease-in-out;
     }
 
-    #lista-pesquisadores {
+    #lista-avaliacoes {
         animation: fadeIn 0.2s ease-in-out;
     }
 
@@ -219,46 +219,33 @@
 
 {% block content %}
 
-<h2>Pesquisadores</h2>
+<h2>Avaliações anteriores</h2>
 
 <div class="container">
     <div class="tab-header">
         <div class="tab-button-wrapper">
             <button class="tab-button-titulo active" onclick="openTab('pesquisadores')" disabled>
-                Lista de Pesquisadores
-            </button>
-            <button id="btn-adicionar" style="border-bottom-left-radius: 0;" class="btn btn-adicionar fecha" onclick="formularioPesquisadores()">
-                +Adicionar Pesquisador
+                Avaliações anteriores
             </button>
         </div>
     </div>
 
-    {% if messages %}
-        <div class="feedback-messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    <div id="lista-pesquisadores">
-        {% for pesquisador in pesquisadores %}
+    <div id="lista-avaliacoes">
+        {% for avaliacao in avaliacoes %}
             <div class="avaliacao-card">
                 <div class="avaliacao-data">
-                    <span>{{ pesquisador.nome }}</span>
+                    <strong><em>Avaliações e Dados de {{ avaliacao.data_inicio }}</em></strong><br>
+                    <span>Média de notas: {{ avaliacao.media_nota }}</span>
                 </div>
                 <div class="avaliacao-info">
-                    <strong><em>{{ pesquisador.matricula }}</em></strong><br>
-                    <span>{{ pesquisador.email }}</span>
+                    <strong><em>Avaliados:</em></strong><br>
+                    <span>{{ avaliacao.qtd_avaliados }}</span>
                 </div>
                 <div class="avaliacao-botoes">
-                    <button class="btn avaliar">Editar</button>
-                    <button class="btn">Remover</button>
+                    <form method="post" action="{% url 'apresentar_anteriores'  avaliacao.id %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn avaliar">Ver mais</button>
+                    </form>
                 </div>
             </div>
         {% empty %}
@@ -315,13 +302,13 @@
 
     function mostrarPesquisadores() {
         document.getElementById('form-pesquisadores').style.display = 'none';
-        document.getElementById('lista-pesquisadores').style.display = 'block';
+        document.getElementById('lista-avaliacoes').style.display = 'block';
         document.getElementById('btn-adicionar').style.display = 'block';
     }
 
     function formularioPesquisadores() {
         document.getElementById('form-pesquisadores').style.display = 'block';
-        document.getElementById('lista-pesquisadores').style.display = 'none';
+        document.getElementById('lista-avaliacoes').style.display = 'none';
         document.getElementById('btn-adicionar').style.display = 'none';
     }
   </script>

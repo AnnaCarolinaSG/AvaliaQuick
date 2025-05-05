@@ -147,6 +147,24 @@
     .btn.avaliar {
         background-color: #7b2cbf;
     }
+
+    .btn-voltar {
+        margin: 0;
+        border: none;
+        bottom: 0;
+        right: 0;
+        background-color: #0a6ebd;
+        z-index: 1;
+        padding: 12px 10px;
+        font-size: 12px;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .btn-voltar.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
 </style>
 
 {% endblock stylesheets %}
@@ -158,38 +176,53 @@
 <div class="container">
     <div class="tab-header">
         <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
-        <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
-        <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+        {% if not anteriores %}
+            <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
+            <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+        {% endif %}
         <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
         <button class="tab-button" onclick="openTab('final')">AVALIAÇÃO FINAL</button>
+        {% if anteriores %}
+            <div class="avaliacao-botoes" style="margin-left: 20px;">
+                <form method="post" action="{% url 'anteriores' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-voltar avaliar">Voltar</button>
+                </form>
+            </div>
+        {% endif %}
     </div>
 
     <div id="info" class="tab-content active">
         {% if periodoAtual %}
             <h3>PERÍODO: {{ periodoAtual.data_inicio|date:"d/m/Y" }} - {% if periodoAtual.data_fim %}{{ periodoAtual.data_fim }}</h3>
-            <form method="post" action="{% url 'reabrir_avaliacao' %}" style="display:inline;">
-                {% csrf_token %}
-                <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
-                <button type="submit" class="btn">
-                    Reabrir
-                </button>
-            </form>
+                {% if not anteriores %}
+                    <form method="post" action="{% url 'reabrir_avaliacao' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
+                        <button type="submit" class="btn">
+                            Reabrir
+                        </button>
+                    </form>
+                {% endif %}
             {% else %}Atual</h3>
-                <form method="post" action="{% url 'fechar_avaliacao' %}" style="display:inline;">
-                    {% csrf_token %}
-                    <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
-                    <button type="submit" class="btn">
-                        Fechar
-                    </button>
-                </form>
+                {% if not anteriores %}
+                    <form method="post" action="{% url 'fechar_avaliacao' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
+                        <button type="submit" class="btn">
+                            Fechar
+                        </button>
+                    </form>
+                {% endif %}
             {% endif %}
 
 
-
-            <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
-            <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
-            <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
-            <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
+            {% if not anteriores %}
+                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
+                <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
+                <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
+                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
+            {% endif %}
             <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
             <p><strong>MÉDIA FINAL:</strong> 0</p>
         {% else %}
@@ -257,7 +290,7 @@
                         </div>
                         <div class="avaliacao-botoes">
                             <button class="btn avaliar" onclick="addArquivos({{ avaliacao.id }})">Adicionar Arquivos</button>
-                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Solicitar Novamente</button>
+                            <button class="btn avaliar" onclick="solicitarNovamente({{ avaliacao.id }})">Solicitar Novamente</button>
                         </div>
                     </div>
                 {% endif %}
@@ -384,6 +417,22 @@
         // Esconde o formulário de upload
         document.getElementById('lista-pendentes').style.display = 'block';
         document.getElementById('formulario-upload').style.display = 'none';
+    }
+
+    function solicitarNovamente(id) {
+        fetch(`/solicitar-novamente/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('E-mail enviado com sucesso!');
+            } else {
+                alert('Erro ao enviar e-mail.');
+            }
+        });
     }
   </script>
 

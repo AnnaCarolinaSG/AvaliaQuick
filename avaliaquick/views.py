@@ -6,6 +6,8 @@ from .models import Pesquisador, Pendentes, AvaliacaoAnual
 from django.db.models import Q
 from .forms import FormularioPesquisador
 from datetime import datetime
+from django.core.mail import send_mail
+import random
 
 def login_redirect_view(request):
     if request.user.is_authenticated:
@@ -76,6 +78,44 @@ def adicionar_arquivos(request):
         messages.error(request, "Erro ao adicionar arquivo.")
         return redirect('avaliacao')
 
+def avaliar_pesquisador(request, id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        pendente = get_object_or_404(Pendentes, id=id)
+        pendente.status = 'FIN'
+        pendente.nota = random.randint(7, 10)
+        pendente.save()
+        messages.success(request, 'Pesquisador avaliado com sucesso!')
+    return redirect('avaliacao')
+
+def solicitar_novamente(request, avaliacao_id):
+    if request.method == 'POST':
+        avaliacao = get_object_or_404(Pendentes, id=avaliacao_id)
+        email_destinatario = avaliacao.pesquisador.email
+
+        assunto = "Solicitação de envio de documentos"
+        mensagem = f"""
+        Olá {avaliacao.pesquisador.nome},
+
+        Por favor, envie os documentos pendentes relacionados à sua avaliação anual.
+
+        Obrigado,
+        AvaliaQuick
+        """
+
+        send_mail(
+            assunto,
+            mensagem,
+            'brianhcosta@gmail.com',  # Remetente (configure no settings.py)
+            [email_destinatario],
+            fail_silently=False
+        )
+
+        messages.success(request, 'E-mail enviado com sucesso!')
+        return redirect('avaliacao')
+
 def avaliacao(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
@@ -141,7 +181,31 @@ def deletar_pesquisador(request, id):
 def anteriores(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
-    return render(request, 'avaliaquick/avaliacoes-anteriores.html')
+
+    anteriores = AvaliacaoAnual.objects.filter(status='FEC').order_by('-data_inicio')
+
+    return render(request, 'avaliaquick/avaliacoes-anteriores.html', {
+        'avaliacoes': anteriores,
+    })
+
+def apresentar_anteriores(request, id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=id).count()
+    pesquisadores = Pesquisador.objects.all()
+    avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id)
+    vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=id)).count()
+
+    return render(request, 'avaliaquick/avaliacao.html', {
+        'pesquisadores': pesquisadores,
+        'avaliacoes': avaliacoes,
+        'finalizados': finalizados,
+        'vazios': vazios,
+        'periodoAtual': AvaliacaoAnual.objects.get(id=id),
+        'anteriores': True,
+    })
+
 
 
 # Create your views here.

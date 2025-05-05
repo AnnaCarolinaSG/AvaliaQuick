@@ -34,6 +34,7 @@ class Pendentes(models.Model):
         ('FIN', 'Finalizado'),
     ]
     status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='PEN')
+    nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
 
     def extensao_arquivo(self):
         if self.arquivos:
