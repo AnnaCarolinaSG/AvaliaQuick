@@ -258,7 +258,10 @@
                 </div>
                 <div class="avaliacao-botoes">
                     <button class="btn avaliar">Editar</button>
-                    <button class="btn">Remover</button>
+                    <form style="width: 100%;" action="{% url 'deletar_pesquisador' pesquisador.id %}" method="post" onsubmit="return confirmarRemocao();">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" style="width: 100%">Remover</button>
+                    </form>
                 </div>
             </div>
         {% empty %}
@@ -298,6 +301,10 @@
         document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
         document.getElementById(tabId).classList.add('active');
     }
+
+    function confirmarRemocao() {
+        return confirm("Tem certeza que deseja remover este pesquisador?");
+    }
 </script>
 
 
@@ -311,11 +318,6 @@
       // Javascript method's body can be found in assets/js/demos.js
       md.initDashboardPageCharts();
 
-      if($('#errorlist')){
-          document.getElementById('form-pesquisadores').style.display = 'block';
-          document.getElementById('lista-pesquisadores').style.display = 'none';
-          document.getElementById('btn-adicionar').style.display = 'none';
-      }
     });
 
     function mostrarPesquisadores() {

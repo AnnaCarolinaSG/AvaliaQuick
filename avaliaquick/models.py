@@ -1,5 +1,17 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+import os
+
+class AvaliacaoAnual(models.Model):
+    data_inicio = models.DateField()
+    data_fim = models.DateField(null=True)
+    media_nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
+    qtd_avaliados = models.IntegerField(validators=[MinValueValidator(0)], null=True)
+    OPCOES_STATUS = [
+        ('ABE', 'Aberta'),
+        ('FEC', 'Fechada'),
+    ]
+    status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='ABE')
 
 class Pesquisador(models.Model):
     nome = models.CharField(null=False, blank=False, max_length=100)
@@ -12,6 +24,7 @@ def caminho_arquivo(instance, filename):
 
 class Pendentes(models.Model):
     pesquisador = models.ForeignKey(Pesquisador, on_delete=models.CASCADE)
+    avaliacaoAnual = models.ForeignKey(AvaliacaoAnual, on_delete=models.CASCADE, default='')
     data_hora = models.DateTimeField(null=False, blank=False)
     arquivos = models.FileField(upload_to=caminho_arquivo, null=True)
 
@@ -21,5 +34,18 @@ class Pendentes(models.Model):
         ('FIN', 'Finalizado'),
     ]
     status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='PEN')
+
+    def extensao_arquivo(self):
+        if self.arquivos:
+            nome = self.arquivos.name
+            return os.path.splitext(nome)[1].lower()  # retorna tipo '.pdf', '.docx'
+        return ''
+
+    def nome_arquivo(self):
+        if self.arquivos:
+            nome_completo = os.path.basename(self.arquivos.name)  # ex: Documento_6Aod4oP.pdf
+            nome_sem_extensao, _ = os.path.splitext(nome_completo)  # separa nome e extensão
+            return nome_sem_extensao
+        return ''
 
 # Create your models here.

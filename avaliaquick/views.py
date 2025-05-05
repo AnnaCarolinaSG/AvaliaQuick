@@ -1,10 +1,11 @@
 from django.db import IntegrityError
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from .models import Pesquisador, Pendentes
+from .models import Pesquisador, Pendentes, AvaliacaoAnual
 from django.db.models import Q
 from .forms import FormularioPesquisador
+from datetime import datetime
 
 def login_redirect_view(request):
     if request.user.is_authenticated:
@@ -15,19 +16,80 @@ def index(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
 
+    periodos = AvaliacaoAnual.objects.filter(status="ABE")
+    return render(request, 'avaliaquick/index.html', {'periodos': periodos})
 
-    return render(request, 'avaliaquick/index.html')
+def criar_avaliacao(request):
+    if request.method == 'POST':
+        nova_avaliacao = AvaliacaoAnual.objects.create(
+            data_inicio=datetime.now(),
+            status='ABE'
+        )
+        pesquisadores = Pesquisador.objects.all()
+        pendentes = [
+            Pendentes(
+                pesquisador=p,
+                avaliacaoAnual=nova_avaliacao,
+                data_hora=datetime.now(),
+                status='PEN'
+            )
+            for p in pesquisadores
+        ]
+        Pendentes.objects.bulk_create(pendentes)
+    return redirect('avaliacao')
+
+def fechar_avaliacao(request):
+    if request.method == 'POST':
+        avaliacao_id = request.POST.get('avaliacao_id')
+        avaliacao = get_object_or_404(AvaliacaoAnual, id=avaliacao_id)
+        avaliacao.status = 'FEC'
+        avaliacao.data_fim = datetime.now()  # opcional
+        avaliacao.save()
+    return redirect('inicio')
+
+def reabrir_avaliacao(request):
+    if request.method == 'POST':
+        avaliacao_id = request.POST.get('avaliacao_id')
+        avaliacao = get_object_or_404(AvaliacaoAnual, id=avaliacao_id)
+        avaliacao.status = 'ABE'
+        avaliacao.data_fim = None  # opcional
+        avaliacao.save()
+    return redirect('inicio')
+
+
+def adicionar_arquivos(request):
+    if request.method == "POST" and request.FILES.get('arquivos'):
+        arquivo = request.FILES['arquivos']
+
+        # Se você tiver um campo de relacionamento, pode adicionar o arquivo a ele
+        # Aqui estou supondo que você queira associar o arquivo à avaliação específica:
+        avaliacao_id = request.POST.get('avaliacao_id')  # Você precisa garantir que o id seja passado no formulário
+        avaliacao = Pendentes.objects.get(id=avaliacao_id)
+
+        # Salva o arquivo
+        avaliacao.arquivos = arquivo
+        avaliacao.save()
+
+        messages.success(request, "Arquivo adicionado com sucesso!")
+        return redirect('avaliacao')  # Redirecionar para a página de avaliação ou onde for adequado
+    else:
+        messages.error(request, "Erro ao adicionar arquivo.")
+        return redirect('avaliacao')
 
 def avaliacao(request):
     if not request.user.is_authenticated:
         raise PermissionDenied
 
-    pendentes = Pendentes.objects.filter(Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True))).count()
-    andamento = Pendentes.objects.filter(status='AND').count()
-    finalizados = Pendentes.objects.filter(status='FIN').count()
+    if AvaliacaoAnual.objects.filter(status='ABE').exists():
+        periodoAtual = AvaliacaoAnual.objects.filter(status='ABE').order_by('-data_inicio').first()
+    else:
+        periodoAtual = AvaliacaoAnual.objects.order_by('-data_inicio').first()
+    pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True))).count()
+    andamento = Pendentes.objects.filter(status='AND', avaliacaoAnual=periodoAtual).count()
+    finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual).count()
     pesquisadores = Pesquisador.objects.all()
-    avaliacoes = Pendentes.objects.all()
-    vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True)).count()
+    avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
+    vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=periodoAtual)).count()
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
@@ -35,7 +97,8 @@ def avaliacao(request):
         'pendentes': pendentes,
         'andamento': andamento,
         'finalizados': finalizados,
-        'vazios': vazios
+        'vazios': vazios,
+        'periodoAtual': periodoAtual,
     })
 
 def perfil(request):
@@ -67,6 +130,13 @@ def lista(request):
         'pesquisadores': pesquisadores,
         'avaliacoes': avaliacoes,
     })
+
+def deletar_pesquisador(request, id):
+    if request.method == 'POST':
+        pesquisador = get_object_or_404(Pesquisador, id=id)
+        pesquisador.delete()
+        messages.success(request, 'Pesquisador removido com sucesso!')
+    return redirect('lista_pesquisadores')
 
 def anteriores(request):
     if not request.user.is_authenticated:
