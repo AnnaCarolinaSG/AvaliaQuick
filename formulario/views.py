@@ -10,6 +10,8 @@ def criarFormularioA(request):
             form.save()
             print(form.cleaned_data)
             return redirect('/formB')
+        else:
+            print(form.errors)
     else:
         form = FormularioAForm()
     return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
@@ -20,6 +22,8 @@ def editarFormularioA(request, id):
     if form.is_valid():
         form.save()
         return redirect('/listaFormularioA')
+    else:
+        print(form.errors)
     return  render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
 
 #--FORMS B--
@@ -28,7 +32,9 @@ def criarFormularioB(request):
         form = FormularioBForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/formC.html')
+            return redirect('/formC')
+        else:
+            print(form.errors)
     else:
         form = FormularioBForm()
     return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
@@ -39,6 +45,8 @@ def editarFormularioB(request, id):
     if form.is_valid():
         form.save()
         return redirect('/formB.html')
+    else:
+        print(form.errors)
     return  render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
 
 
@@ -48,7 +56,9 @@ def criarFormularioC(request):
         form = FormularioCForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/avaliacao.html')
+            return redirect('/avaliacao')
+        else:
+            print(form.errors)
     else:
         form = FormularioCForm()
     return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
@@ -59,6 +69,8 @@ def editarFormularioC(request, id):
     if form.is_valid():
         form.save()
         return redirect('/formC')
+    else:
+        print(form.errors)
     return  render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
 
 
