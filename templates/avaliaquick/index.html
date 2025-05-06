@@ -23,17 +23,27 @@
 
     <div class="container" style="width: 100vw; height: 100vh; padding: 20px; box-sizing: border-box;">
         <div class="main-container" style="display: flex; width: 100%; height: 100%;">
-            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px; cursor: pointer;" onclick="alert('Você clicou!')">
-                <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center;">
-                    <i class="material-icons" style="font-size: 200px">event_available</i>
-                    <p>Abrir avaliação atual</p>
-                </div>
-                <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center;">
+            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px;">
+                {% if periodos %}
+                    <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center;" onclick="window.location.href='{% url 'avaliacao' %}'">
+                        <i class="material-icons" style="font-size: 200px">event_available</i>
+                        <p>Abrir avaliação atual</p>
+                    </div>
+                {% else %}
+                    <form method="post" action="{% url 'criar_avaliacao' %}" id="form-avaliacao">
+                        {% csrf_token %}
+                        <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center; cursor:pointer;" onclick="document.getElementById('form-avaliacao').submit();">
+                            <i class="material-icons" style="font-size: 200px">event_available</i>
+                            <p>Iniciar período de avaliações</p>
+                        </div>
+                    </form>
+                {% endif %}
+                <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center;" onclick="window.location.href='{% url 'lista_pesquisadores' %}'">
                     <i class="material-icons" style="font-size: 200px">people</i>
                     <p>Ver lista de pesquisadores</p>
                 </div>
             </div>
-            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px; cursor: pointer;" onclick="alert('Você clicou!')">
+            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px;">
                 <h3>Gráfico de Avaliação</h3>
                 <canvas id="myChart" style="height: 30%; width: 50%"></canvas>
             </div>

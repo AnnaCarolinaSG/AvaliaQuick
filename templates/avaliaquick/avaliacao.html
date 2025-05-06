@@ -139,9 +139,66 @@
         font-size: 13px;
     }
 
+    a.btn {
+        text-decoration: none;
+        color: inherit;
+    }
+
     .btn.avaliar {
         background-color: #7b2cbf;
     }
+
+    .btn-voltar {
+        margin: 0;
+        border: none;
+        bottom: 0;
+        right: 0;
+        background-color: #0a6ebd;
+        z-index: 1;
+        padding: 12px 10px;
+        font-size: 12px;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .btn-voltar.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 9999; /* bem alto para ficar acima da navbar */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      padding-top: 100px;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 20px 30px;
+      border-radius: 10px;
+      width: 30%; /* menor */
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #444;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: #000;
+    }
+
 </style>
 
 {% endblock stylesheets %}
@@ -153,20 +210,58 @@
 <div class="container">
     <div class="tab-header">
         <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
-        <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
-        <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+        {% if not anteriores %}
+            <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
+            <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+        {% endif %}
         <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
         <button class="tab-button" onclick="openTab('final')">AVALIAÇÃO FINAL</button>
+        {% if anteriores %}
+            <div class="avaliacao-botoes" style="margin-left: 20px;">
+                <form method="post" action="{% url 'anteriores' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-voltar avaliar">Voltar</button>
+                </form>
+            </div>
+        {% endif %}
     </div>
 
     <div id="info" class="tab-content active">
-        <h3>PERÍODO: 10/01/2025 - 21/02/2025 <a href="#">Alterar</a></h3>
-        <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
-        <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
-        <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
-        <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
-        <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
-        <p><strong>MÉDIA FINAL:</strong> 0</p>
+        {% if periodoAtual %}
+            <h3>PERÍODO: {{ periodoAtual.data_inicio|date:"d/m/Y" }} - {% if periodoAtual.data_fim %}{{ periodoAtual.data_fim }}</h3>
+                {% if not anteriores %}
+                    <form method="post" action="{% url 'reabrir_avaliacao' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
+                        <button type="submit" class="btn">
+                            Reabrir
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}Atual</h3>
+                {% if not anteriores %}
+                    <form method="post" action="{% url 'fechar_avaliacao' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
+                        <button type="submit" class="btn">
+                            Fechar
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+
+
+            {% if not anteriores %}
+                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
+                <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
+                <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
+                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
+            {% endif %}
+            <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
+            <p><strong>MÉDIA FINAL:</strong> 0</p>
+        {% else %}
+            <p>Nenhum período foi iniciado ainda.</p>
+        {% endif %}
     </div>
 
     <div id="prontos" class="tab-content">
@@ -185,8 +280,11 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
-                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Avaliar</button>
-                            <button class="btn" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver arquivos</button>
+                            <form method="POST" action="{% url 'avaliar_pesquisador' avaliacao.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn avaliar">Avaliar</button>
+                            </form>
+                            <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }})">Ver arquivos</button>
                         </div>
                     </div>
                 {% endif %}
@@ -199,36 +297,20 @@
         <div id="detalhe-arquivos" style="display: none;">
             <h3><em id="nome-pesquisador"></em></h3>
 
-            <div class="arquivo-grupo">
-                <p><em>Arquivos tipo 1</em></p>
-                <div class="arquivo-item">
-                    <span>📄 <strong>Arquivo 1</strong><br>.pdf - 23 Mb</span>
-                    <div class="arquivo-botoes">
-                        <button class="btn">Visualizar</button>
-                        <button class="btn">Baixar ⬇️</button>
+            {% for avaliacao in avaliacoes %}
+                {% if avaliacao.arquivos %}
+                    <div id="detalhe-arquivos-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
+                        <p><em>{{ avaliacao.arquivos.name|slice:"-50" }}</em></p>
+                        <div class="arquivo-item">
+                            <span>📄 <strong>{{ avaliacao.nome_arquivo }}</strong><br>{{ avaliacao.extensao_arquivo }} - {{ avaliacao.arquivos.size|filesizeformat }}</span>
+                            <div class="arquivo-botoes">
+                                <a href="{{ avaliacao.arquivos.url }}" class="btn" target="_blank">Visualizar</a>
+                                <a href="{{ avaliacao.arquivos.url }}" class="btn" download>Baixar ⬇️</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="arquivo-grupo">
-                <p><em>Arquivos tipo 2</em></p>
-                <div class="arquivo-item">
-                    <span>📄 <strong>Arquivo 2</strong><br>.pdf - 12 Mb</span>
-                    <div class="arquivo-botoes">
-                        <button class="btn">Visualizar</button>
-                        <button class="btn">Baixar ⬇️</button>
-                    </div>
-                </div>
-
-                <div class="arquivo-item">
-                    <span>📄 <strong>Arquivo 3</strong><br>.pdf - 45 Mb</span>
-                    <div class="arquivo-botoes">
-                        <button class="btn">Visualizar</button>
-                        <button class="btn">Baixar ⬇️</button>
-                    </div>
-                </div>
-            </div>
-
+                {% endif %}
+            {% endfor %}
             <button class="btn" onclick="voltarParaPrincipal()">Voltar</button>
         </div>
     </div>
@@ -244,13 +326,28 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
-                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Solicitar Novamente</button>
+                            <button class="btn avaliar" onclick="addArquivos({{ avaliacao.id }})">Adicionar Arquivos</button>
+                            <button class="btn avaliar" onclick="solicitarNovamente({{ avaliacao.id }})">Solicitar Novamente</button>
                         </div>
                     </div>
                 {% endif %}
             {% empty %}
                 <p>Nenhuma avaliação disponível no momento.</p>
             {% endfor %}
+        </div>
+
+        <div id="formulario-upload" style="display:none;">
+            <form method="POST" enctype="multipart/form-data" action="{% url 'adicionar_arquivos' %}">
+                {% csrf_token %}
+
+                <!-- Campo oculto com o ID da avaliação (substitua com o valor correto) -->
+                <input type="hidden" name="avaliacao_id" id="avaliacao_id" value="{{ avaliacao.id }}">
+
+                <label for="arquivo">Selecione um arquivo:</label>
+                <input type="file" name="arquivos" id="arquivo" required><br><br>
+                <button type="submit" class="btn">Enviar</button>
+                <button type="button" class="btn" onclick="fecharFormulario()">Cancelar</button>
+            </form>
         </div>
     </div>
 
@@ -286,16 +383,36 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-info">
-                            <strong><em>Nota Final: 8,74</em></strong><br>
+                            <strong><em>Nota Final: {{ avaliacao.nota }}</em></strong><br>
                         </div>
                         <div class="avaliacao-botoes">
-                            <button class="btn avaliar" onclick="mostrarArquivos('{{ avaliacao.id }}')">Ver Mais</button>
+                            <button class="btn avaliar"
+                                    onclick="mostrarDetalhes(this)"
+                                    data-nome="{{ avaliacao.pesquisador.nome }}"
+                                    data-email="{{ avaliacao.pesquisador.email }}"
+                                    data-nota="{{ avaliacao.nota }}"
+                                    data-status="{{ avaliacao.status }}"
+                                    data-data="{{ avaliacao.data_hora|date:'d/m/Y H:i' }}">
+                                Ver Mais
+                            </button>
                         </div>
                     </div>
                 {% endif %}
             {% empty %}
                 <p>Nenhuma avaliação disponível no momento.</p>
             {% endfor %}
+        </div>
+
+        <div id="modalAvaliacao" class="modal" style="display: none;">
+          <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h3>Informações da Avaliação</h3>
+            <p><strong>Pesquisador:</strong> <span id="modal-nome"></span></p>
+            <p><strong>Email:</strong> <span id="modal-email"></span></p>
+            <p><strong>Nota:</strong> <span id="modal-nota"></span></p>
+            <p><strong>Status:</strong> <span id="modal-status"></span></p>
+            <p><strong>Data:</strong> <span id="modal-data"></span></p>
+          </div>
         </div>
     </div>
 </div>
@@ -323,14 +440,69 @@
 
     });
 
-    function mostrarArquivos() {
-        document.getElementById('lista-avaliacoes').style.display = 'none';
+    function mostrarArquivos(id) {
+        // Esconde todos os detalhes dos arquivos
+        const detalhesArquivos = document.querySelectorAll('.arquivo-grupo');
+        detalhesArquivos.forEach(function (detalhe) {
+            detalhe.style.display = 'none';
+        });
+
+        // Exibe a div específica para a avaliação clicada
+        const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
+        if (detalheEspecifico) {
+            detalheEspecifico.style.display = 'block';
+        }
+
+        // Exibe a seção de detalhes
         document.getElementById('detalhe-arquivos').style.display = 'block';
+        document.getElementById('lista-avaliacoes').style.display = 'none';
     }
 
     function voltarParaPrincipal() {
         document.getElementById('lista-avaliacoes').style.display = 'block';
         document.getElementById('detalhe-arquivos').style.display = 'none';
+    }
+
+    function addArquivos(id) {
+        // Exibe o formulário de upload de arquivos
+        document.getElementById('avaliacao_id').value = id;
+        document.getElementById('formulario-upload').style.display = 'block';
+        document.getElementById('lista-pendentes').style.display = 'none';
+    }
+
+    function fecharFormulario() {
+        // Esconde o formulário de upload
+        document.getElementById('lista-pendentes').style.display = 'block';
+        document.getElementById('formulario-upload').style.display = 'none';
+    }
+
+    function solicitarNovamente(id) {
+        fetch(`/solicitar-novamente/${id}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('E-mail enviado com sucesso!');
+            } else {
+                alert('Erro ao enviar e-mail.');
+            }
+        });
+    }
+
+    function mostrarDetalhes(btn) {
+        document.getElementById('modal-nome').textContent = btn.dataset.nome;
+        document.getElementById('modal-email').textContent = btn.dataset.email;
+        document.getElementById('modal-nota').textContent = btn.dataset.nota;
+        document.getElementById('modal-status').textContent = btn.dataset.status;
+        document.getElementById('modal-data').textContent = btn.dataset.data;
+        document.getElementById('modalAvaliacao').style.display = 'block';
+    }
+
+    function fecharModal() {
+        document.getElementById('modalAvaliacao').style.display = 'none';
     }
   </script>
 

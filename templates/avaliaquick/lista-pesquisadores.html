@@ -257,8 +257,18 @@
                     <span>{{ pesquisador.email }}</span>
                 </div>
                 <div class="avaliacao-botoes">
-                    <button class="btn avaliar">Editar</button>
-                    <button class="btn">Remover</button>
+                    <button class="btn avaliar"
+                            onclick="editarPesquisador(this)"
+                            data-id="{{ pesquisador.id }}"
+                            data-nome="{{ pesquisador.nome }}"
+                            data-matricula="{{ pesquisador.matricula }}"
+                            data-email="{{ pesquisador.email }}">
+                        Editar
+                    </button>
+                    <form style="width: 100%;" action="{% url 'deletar_pesquisador' pesquisador.id %}" method="post" onsubmit="return confirmarRemocao();">
+                        {% csrf_token %}
+                        <button type="submit" class="btn" style="width: 100%">Remover</button>
+                    </form>
                 </div>
             </div>
         {% empty %}
@@ -268,11 +278,23 @@
 
     <div id="form-pesquisadores"  style="display: none;">
         <div id="pesquisadores" class="tab-content active">
+            <form method="post" class="meu-formulario" action="{% url 'editar_pesquisador' 0 %}" id="formEditarPesquisador">
+                {% csrf_token %}
+                <input type="hidden" name="id" id="pesq-id">
+                <label>Nome:</label>
+                <input type="text" name="nome" id="pesq-nome" required><br>
+                <label>Matrícula:</label>
+                <input type="text" name="matricula" id="pesq-matricula" required><br>
+                <label>Email:</label>
+                <input type="email" name="email" id="pesq-email" required><br><br>
 
-            <form method="post" class="meu-formulario">
+                <button type="button" class="btn" onclick="mostrarPesquisadores()">Voltar</button>
+                <button type="submit" class="btn">Salvar</button>
+            </form>
+            <form method="post" class="meu-formulario" id="formAddPesquisador">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button onclick="mostrarPesquisadores()" class="btn">Voltar</button>
+                <button type="button" class="btn" onclick="mostrarPesquisadores()">Voltar</button>
                 <button type="submit" class="btn">Enviar</button>
             </form>
         </div>
@@ -298,6 +320,10 @@
         document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
         document.getElementById(tabId).classList.add('active');
     }
+
+    function confirmarRemocao() {
+        return confirm("Tem certeza que deseja remover este pesquisador?");
+    }
 </script>
 
 
@@ -311,11 +337,6 @@
       // Javascript method's body can be found in assets/js/demos.js
       md.initDashboardPageCharts();
 
-      if($('#errorlist')){
-          document.getElementById('form-pesquisadores').style.display = 'block';
-          document.getElementById('lista-pesquisadores').style.display = 'none';
-          document.getElementById('btn-adicionar').style.display = 'none';
-      }
     });
 
     function mostrarPesquisadores() {
@@ -325,9 +346,36 @@
     }
 
     function formularioPesquisadores() {
+        document.getElementById('formAddPesquisador').style.display = 'block';
         document.getElementById('form-pesquisadores').style.display = 'block';
         document.getElementById('lista-pesquisadores').style.display = 'none';
+        document.getElementById('formEditarPesquisador').style.display = 'none';
         document.getElementById('btn-adicionar').style.display = 'none';
+    }
+
+    function editarPesquisador(button) {
+        // Captura os dados
+        const id = button.getAttribute('data-id');
+        const nome = button.getAttribute('data-nome');
+        const matricula = button.getAttribute('data-matricula');
+        const email = button.getAttribute('data-email');
+
+        // Preenche os campos
+        document.getElementById('pesq-id').value = id;
+        document.getElementById('pesq-nome').value = nome;
+        document.getElementById('pesq-matricula').value = matricula;
+        document.getElementById('pesq-email').value = email;
+
+        // Atualiza a ação do form dinamicamente
+        const form = document.getElementById('formEditarPesquisador');
+        form.action = `/pesquisador/${id}/editar/`;
+
+        // Alterna visibilidade
+        document.getElementById('formEditarPesquisador').style.display = 'block';
+        document.getElementById('lista-pesquisadores').style.display = 'none';
+        document.getElementById('formAddPesquisador').style.display = 'none';
+        document.getElementById('btn-adicionar').style.display = 'none';
+        document.getElementById('form-pesquisadores').style.display = 'block';
     }
   </script>
 
