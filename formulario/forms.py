@@ -3,7 +3,7 @@ from symtable import Class
 from django import forms
 from .models import Formulario_A, Formulario_B, Formulario_C, QUANTIDADE_CHOICES, SELECAO_UNICA_CHOICES, SELECAO_CHOICES, PORCENTAGEM_CHOICES, VALOR_CONTRATO_CONVENIO_CHOICES, VALOR_RECURSOS_FINANCEIROS_COMPROVADOS_CHOICES
 
-widget_config = forms.Select(attrs={'class': 'widget-quantidade'})
+widget_config = forms.Select(attrs={'class': 'widget-quantidade', 'id': 'selecao_multipla'})
 widget_checkbox_redondo = forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
 
 
@@ -11,23 +11,23 @@ class FormularioAForm(forms.ModelForm):
 
     visao_sistemica = forms.ChoiceField(
         choices=SELECAO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'radios-inline'})
+        widget=forms.RadioSelect(attrs={'class': 'radios-inline', 'id': 'selecao_multipla'})
     )
     visao_analitica = forms.ChoiceField(
         choices=SELECAO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'radios-inline'})
+        widget=forms.RadioSelect(attrs={'class': 'radios-inline', 'id': 'selecao_multipla'})
     )
     foco_planejamento = forms.ChoiceField(
         choices=SELECAO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'radios-inline'})
+        widget=forms.RadioSelect(attrs={'class': 'radios-inline', 'id': 'selecao_multipla'})
     )
     orientacao_mudancas = forms.ChoiceField(
         choices=SELECAO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'radios-inline'})
+        widget=forms.RadioSelect(attrs={'class': 'radios-inline','id': 'selecao_multipla'})
     )
     relacoes_colaboracao = forms.ChoiceField(
         choices=SELECAO_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'radios-inline'})
+        widget=forms.RadioSelect(attrs={'class': 'radios-inline', 'id': 'selecao_multipla'})
     )
 
     class Meta:

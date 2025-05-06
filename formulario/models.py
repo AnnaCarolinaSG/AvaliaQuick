@@ -33,7 +33,7 @@ VALOR_RECURSOS_FINANCEIROS_COMPROVADOS_CHOICES = [
 ]
 
 class Formulario_A(models.Model):
-    avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE)
+    #avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE, null=True)
     visao_sistemica = models.PositiveIntegerField(choices=SELECAO_CHOICES, null=False, blank=False)
     visao_analitica = models.PositiveIntegerField(choices=SELECAO_CHOICES,null=False, blank=False)
     foco_planejamento = models.PositiveIntegerField(choices=SELECAO_CHOICES,null=False, blank=False)
@@ -47,7 +47,7 @@ class Formulario_A(models.Model):
 
 class Formulario_B(models.Model):
     #Parte B1
-    avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE)
+    #avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE, null=True)
 
     presidente_comite = models.PositiveIntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
     membro_comite = models.PositiveIntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
@@ -66,7 +66,7 @@ class Formulario_B(models.Model):
 
 class Formulario_C(models.Model):
 
-    avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE)
+    #avaliacao = models.ForeignKey(Pendentes, on_delete=models.CASCADE)
     #Parte C1
     atuacao_editor = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
     clareza_coesao = models.IntegerField(choices=PORCENTAGEM_CHOICES, null=False, blank=False)
