@@ -151,3 +151,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'brianhcosta@gmail.com'
 EMAIL_HOST_PASSWORD = 'fott gelu zxfy yiww'
+
+CSRF_TRUSTED_ORIGINS = ['https://avaliaquick-production.up.railway.app']
