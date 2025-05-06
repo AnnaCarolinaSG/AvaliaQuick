@@ -1,4 +1,3 @@
-
       <!-- Navbar -->
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
@@ -24,16 +23,22 @@
                 </button>
               </div>
             </form>
+            <div id="modal-dash" class="modal-dash">
+              <div class="modal-content-dash">
+                <span class="close-dash" onclick="fecharDash()">&times;</span>
+                <iframe id="iframe-dash" width="100%" height="500px" frameborder="0" allowFullScreen="true"></iframe>
+              </div>
+            </div>
             <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="#pablo">
+              <li class="nav-item" title="Dashboard">
+                <a class="nav-link" onclick="abrirDash()" style="cursor: pointer;">
                   <i class="material-icons">dashboard</i>
                   <p class="d-lg-none d-md-block">
                     Stats
                   </p>
                 </a>
               </li>
-              <li class="nav-item dropdown">
+              <li class="nav-item dropdown" title="Notificações">
                 <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="material-icons">notifications</i>
                   <span class="notification">4</span>
@@ -68,3 +73,16 @@
         
         </div>
       </nav>
+
+<script>
+    function abrirDash() {
+        document.getElementById("iframe-dash").src = "https://app.powerbi.com/view?r=eyJrIjoiZDM4YjkwNTEtOWZlNi00ZTljLWIzNTAtMDEyOWU3MWJlNTBlIiwidCI6ImNmNzJlMmJkLTdhMmItNDc4My1iZGViLTM5ZDU3YjA3Zjc2ZiIsImMiOjR9"; // Cole seu link aqui
+        document.getElementById("modal-dash").style.display = "block";
+    }
+
+    function fecharDash() {
+        document.getElementById("modal-dash").style.display = "none";
+        document.getElementById("iframe-dash").src = "";  // Limpa para não deixar o vídeo/dash rodando no fundo
+    }
+</script>
+

@@ -1,11 +1,10 @@
 from django.urls import path
-from avaliaquick.views import index, avaliacao, perfil, lista, anteriores, login_redirect_view, deletar_pesquisador, criar_avaliacao, fechar_avaliacao, reabrir_avaliacao, adicionar_arquivos, apresentar_anteriores, avaliar_pesquisador, solicitar_novamente, editar_pesquisador
+from avaliaquick.views import index, avaliacao, lista, anteriores, login_redirect_view, deletar_pesquisador, criar_avaliacao, fechar_avaliacao, reabrir_avaliacao, adicionar_arquivos, apresentar_anteriores, avaliar_pesquisador, solicitar_novamente, editar_pesquisador
 
 urlpatterns = [
     path('', login_redirect_view, name="login_redirect"),
     path('inicio/', index, name="inicio"),
     path('avaliacao/', avaliacao, name="avaliacao"),
-    path('perfil', perfil),
     path('lista-pesquisadores', lista, name='lista_pesquisadores'),
     path('avaliacoes-anteriores', anteriores, name='anteriores'),
     path('pesquisador/deletar/<int:id>/', deletar_pesquisador, name='deletar_pesquisador'),

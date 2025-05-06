@@ -141,11 +141,6 @@ def avaliacao(request):
         'periodoAtual': periodoAtual,
     })
 
-def perfil(request):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    return render(request, 'avaliaquick/perfil.html')
-
 def editar_pesquisador(request, id):
     pesquisador = get_object_or_404(Pesquisador, id=id)
     if request.method == 'POST':
