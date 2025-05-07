@@ -14,15 +14,13 @@
           <div class="collapse navbar-collapse justify-content-end">
           {% if request.user.is_authenticated %}
 
-            <form class="navbar-form">
-              <div class="input-group no-border">
-                <input type="text" value="" class="form-control" placeholder="Pesquisar...">
-                <button type="submit" class="btn btn-white btn-round btn-just-icon">
-                  <i class="material-icons">search</i>
-                  <div class="ripple-container"></div>
-                </button>
-              </div>
-            </form>
+            <div class="input-group no-border position-relative" id="search-container">
+              <input type="text" id="search-input" class="form-control" placeholder="Pesquisar...">
+              <div id="search-results" class="dropdown-menu" style="width: auto; max-height: 300px; overflow-y: auto;"></div>
+              <button type="button" class="btn btn-white btn-round btn-just-icon">
+                <i class="material-icons">search</i>
+              </button>
+            </div>
             <div id="modal-dash" class="modal-dash">
               <div class="modal-content-dash">
                 <span class="close-dash" onclick="fecharDash()">&times;</span>
@@ -39,20 +37,20 @@
                 </a>
               </li>
               <li class="nav-item dropdown" title="Notificações">
-                <a class="nav-link" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class="material-icons">notifications</i>
-                  <span class="notification">4</span>
-                  <p class="d-lg-none d-md-block">
-                    Some Actions
-                  </p>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="#">3 novas avaliações</a>
-                  <a class="dropdown-item" href="#">Você possui 5 avaliações em andamento</a>
-                  <a class="dropdown-item" href="#">O período de avaliação acaba em 10 dias</a>
-                  <a class="dropdown-item" href="#">A média mudou para 8,2</a>
-                </div>
+                  <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">notifications</i>
+                    {% if qtd_notificacoes %}
+                      <span class="notification">{{ qtd_notificacoes }}</span>
+                    {% endif %}
+                    <p class="d-lg-none d-md-block">Notificações</p>
+                  </a>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    {% for n in notificacoes %}
+                      <a class="dropdown-item" href="#">{{ n }}</a>
+                    {% endfor %}
+                  </div>
               </li>
+
               <li class="nav-item dropdown">
                 <a class="nav-link" href="#pablo" id="navbarDropdownProfile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <i class="material-icons">person</i>
@@ -82,7 +80,74 @@
 
     function fecharDash() {
         document.getElementById("modal-dash").style.display = "none";
-        document.getElementById("iframe-dash").src = "";  // Limpa para não deixar o vídeo/dash rodando no fundo
+        document.getElementById("iframe-dash").src = "";
     }
 </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("search-input");
+  const resultsBox = document.getElementById("search-results");
+
+  input.addEventListener("input", function () {
+    const query = input.value.trim();
+    if (query.length < 1) {
+      resultsBox.classList.remove("show");
+      resultsBox.innerHTML = "";
+      return;
+    }
+
+    fetch(`/buscar/?q=${encodeURIComponent(query)}`)
+      .then(response => response.json())
+      .then(data => {
+        resultsBox.innerHTML = "";
+
+        if (data.resultados.length === 0) {
+          resultsBox.classList.remove("show");
+          return;
+        }
+
+        data.resultados.forEach(item => {
+          const option = document.createElement("a");
+          option.classList.add("dropdown-item");
+          option.style.display = "flex"
+          option.style.flexDirection = "column"
+          if (item.tipo === "Pesquisador") {
+              option.href = `/perfil/${item.id}`;
+          } else {
+              if(item.status === "FEC" && item.tipo === "Período"){
+                  option.href = `/avaliacao/${item.id}`;
+              } else {
+                  if(item.status === "FIN" && item.tipo === "Avaliação"){
+                      option.onclick = function(e) {
+                          window.location.href = "/avaliacao?aba=finalizadas";
+                        };
+                  } else if(item.status === "PEN" && item.arquivo){
+                      option.onclick = function(e) {
+                          window.location.href = "/avaliacao?aba=prontos";
+                        };
+                  } else {
+                      option.onclick = function(e) {
+                          window.location.href = "/avaliacao?aba=pendentes";
+                        };
+                  }
+              }
+          }
+          option.innerHTML = `<strong>${item.label}</strong><small>${item.tipo}</small>`;
+          resultsBox.appendChild(option);
+        });
+
+        resultsBox.classList.add("show");
+      });
+  });
+
+  // Oculta o menu ao clicar fora
+  document.addEventListener("click", function (e) {
+    if (!document.getElementById("search-container").contains(e.target)) {
+      resultsBox.classList.remove("show");
+    }
+  });
+});
+</script>
+
 

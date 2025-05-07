@@ -7,7 +7,8 @@ from django.db.models import Q
 from .forms import FormularioPesquisador, EnvioArquivosForm
 from datetime import datetime
 from django.core.mail import send_mail
-from django.http import HttpResponseForbidden
+from django.urls import reverse
+from django.http import HttpResponseForbidden, JsonResponse
 import random
 
 def login_redirect_view(request):
@@ -250,4 +251,62 @@ def enviar_arquivos_view(request, pendente_id, token):
 
 def sucesso_view(request):
     return render(request, 'avaliaquick/sucesso.html')
+
+def busca_global(request):
+    termo = request.GET.get('q', '').strip()
+    resultados = []
+
+    if termo:
+        pesquisadores = Pesquisador.objects.filter(nome__icontains=termo)[:5]
+        for p in pesquisadores:
+            resultados.append({
+                'label': p.nome,
+                'tipo': 'Pesquisador',
+                'url': reverse('detalhes_pesquisador', args=[p.id]),
+                'id': p.id,
+            })
+
+        avaliacoes = AvaliacaoAnual.objects.filter(status__icontains=termo)[:5]
+        for a in avaliacoes:
+            resultados.append({
+                'label': f"Avaliação de {a.data_inicio.strftime('%d/%m/%Y')}",
+                'tipo': 'Período',
+                'url': reverse('detalhes_avaliacao', args=[a.id]),
+                'id': a.id,
+                'status': a.status,
+            })
+
+        pendentes = Pendentes.objects.filter(status__icontains=termo)[:5]
+        for p in pendentes:
+            resultados.append({
+                'label': f"Avaliação: {p.pesquisador.nome}",
+                'tipo': 'Avaliação',
+                'url': reverse('detalhes_pendente', args=[p.id]),
+                'id': p.id,
+                'status': p.status,
+                'arquivos': bool(p.arquivos),
+            })
+
+    return JsonResponse({'resultados': resultados})
+
+def perfil(request, id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    pesquisador = get_object_or_404(Pesquisador, id=id)
+    return render(request, 'avaliaquick/perfil.html', {
+        'pesquisador': pesquisador,
+    })
+
+def detalhes_pesquisador(request, pk):
+    pesquisador = get_object_or_404(Pesquisador, pk=pk)
+    return render(request, 'includes/navigation.html', {'pesquisador': pesquisador})
+
+def detalhes_avaliacao(request, pk):
+    avaliacao = get_object_or_404(AvaliacaoAnual, pk=pk)
+    return render(request, 'includes/navigation.html', {'avaliacao': avaliacao})
+
+def detalhes_pendente(request, pk):
+    pendente = get_object_or_404(Pendentes, pk=pk)
+    return render(request, 'includes/navigation.html', {'pendente': pendente})
 # Create your views here.

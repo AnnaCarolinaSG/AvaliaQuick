@@ -250,7 +250,8 @@
         {% for pesquisador in pesquisadores %}
             <div class="avaliacao-card">
                 <div class="avaliacao-data">
-                    <span>{{ pesquisador.nome }}</span>
+                    <span>{{ pesquisador.nome }}</span><br>
+                    <a href="/perfil/{{ pesquisador.id }}">Detalhes</a>
                 </div>
                 <div class="avaliacao-info">
                     <strong><em>{{ pesquisador.matricula }}</em></strong><br>

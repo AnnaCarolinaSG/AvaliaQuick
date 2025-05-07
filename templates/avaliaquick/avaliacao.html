@@ -213,8 +213,8 @@
         {% if not anteriores %}
             <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
             <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+            <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
         {% endif %}
-        <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
         <button class="tab-button" onclick="openTab('final')">AVALIAÇÃO FINAL</button>
         {% if anteriores %}
             <div class="avaliacao-botoes" style="margin-left: 20px;">
@@ -284,7 +284,7 @@
                                 {% csrf_token %}
                                 <button type="submit" class="btn avaliar">Avaliar</button>
                             </form>
-                            <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }})">Ver arquivos</button>
+                            <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }}, 1)">Ver arquivos</button>
                         </div>
                     </div>
                 {% endif %}
@@ -311,7 +311,7 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            <button class="btn" onclick="voltarParaPrincipal()">Voltar</button>
+            <button class="btn" onclick="voltarParaPrincipal(1)">Voltar</button>
         </div>
     </div>
 
@@ -362,6 +362,16 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
+                            <button class="btn avaliar"
+                                onclick="editarPesquisador(this)"
+                                data-id="{{ pesquisador.id }}"
+                                data-nome="{{ pesquisador.nome }}"
+                                data-matricula="{{ pesquisador.matricula }}"
+                                data-email="{{ pesquisador.email }}">
+                                Editar
+                            </button>
+                        </div>
+                        <div class="avaliacao-status">
                             <H4>FINALIZADO</H4>
                         </div>
                     </div>
@@ -395,12 +405,32 @@
                                     data-data="{{ avaliacao.data_hora|date:'d/m/Y H:i' }}">
                                 Ver Mais
                             </button>
+                            {% if anteriores %}<button class="btn" onclick="mostrarArquivos({{ avaliacao.id }}, 2)">Ver arquivos</button>{% endif %}
                         </div>
                     </div>
                 {% endif %}
             {% empty %}
                 <p>Nenhuma avaliação disponível no momento.</p>
             {% endfor %}
+        </div>
+        <div id="detalhe-arquivos-final" style="display: none;">
+            <h3><em id="nome-pesquisador"></em></h3>
+
+            {% for avaliacao in avaliacoes %}
+                {% if avaliacao.arquivos and avaliacao.status == 'FIN' %}
+                    <div id="detalhe-arquivos-final-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
+                        <p><em>{{ avaliacao.arquivos.name|slice:"-50" }}</em></p>
+                        <div class="arquivo-item">
+                            <span>📄 <strong>{{ avaliacao.nome_arquivo }}</strong><br>{{ avaliacao.extensao_arquivo }} - {{ avaliacao.arquivos.size|filesizeformat }}</span>
+                            <div class="arquivo-botoes">
+                                <a href="{{ avaliacao.arquivos.url }}" class="btn" target="_blank">Visualizar</a>
+                                <a href="{{ avaliacao.arquivos.url }}" class="btn" download>Baixar ⬇️</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <button class="btn" onclick="voltarParaPrincipal(2)">Voltar</button>
         </div>
 
         <div id="modalAvaliacao" class="modal" style="display: none;">
@@ -412,12 +442,22 @@
             <p><strong>Nota:</strong> <span id="modal-nota"></span></p>
             <p><strong>Status:</strong> <span id="modal-status"></span></p>
             <p><strong>Data:</strong> <span id="modal-data"></span></p>
+             <form method="POST" style="display:inline;">
+                 {% csrf_token %}
+                 <button type="submit" class="btn avaliar">Acessar formulário</button>
+             </form>
           </div>
         </div>
     </div>
 </div>
 
 <script>
+    const params = new URLSearchParams(window.location.search);
+    const aba = params.get("aba");
+    if (aba) {
+      openTab(aba);
+    }
+
     function openTab(tabId) {
         document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -440,7 +480,7 @@
 
     });
 
-    function mostrarArquivos(id) {
+    function mostrarArquivos(id, botao) {
         // Esconde todos os detalhes dos arquivos
         const detalhesArquivos = document.querySelectorAll('.arquivo-grupo');
         detalhesArquivos.forEach(function (detalhe) {
@@ -448,19 +488,32 @@
         });
 
         // Exibe a div específica para a avaliação clicada
-        const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
+        const detalheEspecifico = document.getElementById('detalhe-arquivos-final-' + id);
+        if(botao === 1) {
+            const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
+        }
         if (detalheEspecifico) {
             detalheEspecifico.style.display = 'block';
         }
 
         // Exibe a seção de detalhes
-        document.getElementById('detalhe-arquivos').style.display = 'block';
-        document.getElementById('lista-avaliacoes').style.display = 'none';
+        if(botao === 1) {
+            document.getElementById('detalhe-arquivos').style.display = 'block';
+            document.getElementById('lista-avaliacoes').style.display = 'none';
+        } else {
+            document.getElementById('detalhe-arquivos-final').style.display = 'block';
+            document.getElementById('lista-final').style.display = 'none';
+        }
     }
 
-    function voltarParaPrincipal() {
-        document.getElementById('lista-avaliacoes').style.display = 'block';
-        document.getElementById('detalhe-arquivos').style.display = 'none';
+    function voltarParaPrincipal(botao) {
+        if(botao === 1) {
+            document.getElementById('detalhe-arquivos').style.display = 'none';
+            document.getElementById('lista-avaliacoes').style.display = 'block';
+        } else {
+            document.getElementById('detalhe-arquivos-final').style.display = 'none';
+            document.getElementById('lista-final').style.display = 'block';
+        }
     }
 
     function addArquivos(id) {

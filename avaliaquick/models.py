@@ -19,6 +19,7 @@ class Pesquisador(models.Model):
     matricula = models.CharField(null=False, blank=False, unique=True, max_length=15)
     email = models.EmailField(null=False, blank=False, default='')
     token = models.CharField(max_length=36, unique=True, default=uuid.uuid4, editable=False)
+    ativo = models.BooleanField(default=True)
 
 
 def caminho_arquivo(instance, filename):
