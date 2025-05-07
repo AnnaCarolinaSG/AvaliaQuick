@@ -1,6 +1,7 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 import os
+import uuid
 
 class AvaliacaoAnual(models.Model):
     data_inicio = models.DateField()
@@ -17,6 +18,7 @@ class Pesquisador(models.Model):
     nome = models.CharField(null=False, blank=False, max_length=100)
     matricula = models.CharField(null=False, blank=False, unique=True, max_length=15)
     email = models.EmailField(null=False, blank=False, default='')
+    token = models.CharField(max_length=36, unique=True, default=uuid.uuid4, editable=False)
 
 
 def caminho_arquivo(instance, filename):
@@ -49,4 +51,7 @@ class Pendentes(models.Model):
             return nome_sem_extensao
         return ''
 
-# Create your models here.
+class Arquivo(models.Model):
+    pendente = models.ForeignKey(Pendentes, on_delete=models.CASCADE, related_name='arquivos_enviados')
+    arquivo = models.FileField(upload_to='arquivos/')
+    data_upload = models.DateTimeField(auto_now_add=True)

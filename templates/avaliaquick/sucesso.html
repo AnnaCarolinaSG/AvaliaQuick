@@ -1,0 +1,266 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Página Inicial {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 40px;
+        background-color: #f0f2f5;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 30px;
+    }
+
+    .tab-header {
+        display: flex;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-content h3 {
+        margin-top: 0;
+        color: #444;
+    }
+
+    .tab-content p {
+        margin: 8px 0;
+        color: #333;
+    }
+
+    .tab-content a {
+        color: #7b2cbf;
+        text-decoration: none;
+    }
+
+    .tab-content a:hover {
+        text-decoration: underline;
+    }
+
+    #form-pesquisadores {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    #lista-pesquisadores {
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn2 {
+    from {opacity: 0; transform: translateY(-10px); }
+    to {opacity: 1; transform: translateY(0); }
+}
+    .avaliacao-card {
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        background-color: #f9f9f9;
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .avaliacao-data, .avaliacao-info {
+        line-height: 1.6;
+        font-size: 20px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background-color: #eee;
+        padding: 20px;
+        border-radius: 10px;
+        flex: 1;
+        min-height: 100px;
+    }
+
+    .avaliacao-info em {
+        font-style: italic;
+        font-weight: bold;
+    }
+
+    .avaliacao-botoes {
+        display: flex;
+        flex-direction: column;
+        margin-top: 10px;
+        flex: 1;
+        min-height: 100px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background-color: #666;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 13px;
+    }
+
+    .btn.avaliar {
+        background-color: #7b2cbf;
+    }
+
+    .tab-button-wrapper {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .tab-button-titulo {
+        width: 100%;
+    }
+
+    .btn-adicionar {
+        margin: 0;
+        border: none;
+        bottom: 0;
+        right: 0;
+        background-color: #0a6ebd;
+        z-index: 1;
+        padding: 12px 10px;
+        font-size: 12px;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .btn-adicionar.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+        animation: fadeIn2 0.2s ease-in-out;
+    }
+
+    .tab-button-titulo {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 12px 10px;
+        font-weight: bold;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .tab-button-titulo.active {
+        border-bottom: 3px solid #007bff;
+        color: #007bff;
+    }
+
+    .meu-formulario {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .meu-formulario p {
+        margin-bottom: 15px;
+    }
+
+    .meu-formulario input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .meu-formulario label {
+        color: #000;
+    }
+
+    .alert {
+        position: relative;
+        padding-right: 20px; /* Para o "x" não se sobrepor ao texto */
+    }
+
+    .alert .close {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: transparent;
+        border: none;
+        font-size: 30px;
+        color: #000;
+        cursor: pointer;
+    }
+</style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<h1>Envio realizado com sucesso!</h1>
+<p>Obrigado, {{ pesquisador.nome }}. Seus arquivos foram recebidos para a avaliação anual.</p>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Fechar a mensagem ao clicar no "x"
+        const closeButtons = document.querySelectorAll('.alert .close .fecha .btn-adicionar');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const alert = this.closest('.alert');
+                alert.style.display = 'none';
+            });
+        });
+    });
+
+    function openTab(tabId) {
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+        document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+</script>
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+  <script>
+    $(document).ready(function() {
+      // Javascript method's body can be found in assets/js/demos.js
+      md.initDashboardPageCharts();
+
+    });
+
+    function cancelarEnvio() {
+        document.getElementById('form-pesquisadores').style.display = 'none';
+        document.getElementById('lista-pesquisadores').style.display = 'block';
+        document.getElementById('btn-adicionar').style.display = 'block';
+    }
+  </script>
+
+{% endblock javascripts %}

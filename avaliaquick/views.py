@@ -2,11 +2,12 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from .models import Pesquisador, Pendentes, AvaliacaoAnual
+from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo
 from django.db.models import Q
-from .forms import FormularioPesquisador
+from .forms import FormularioPesquisador, EnvioArquivosForm
 from datetime import datetime
 from django.core.mail import send_mail
+from django.http import HttpResponseForbidden
 import random
 
 def login_redirect_view(request):
@@ -94,12 +95,13 @@ def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':
         avaliacao = get_object_or_404(Pendentes, id=avaliacao_id)
         email_destinatario = avaliacao.pesquisador.email
-
+        link = f"https://avaliaquick-production.up.railway.app/formulario-envio/{avaliacao_id}/{avaliacao.pesquisador.token}/"
         assunto = "Solicitação de envio de documentos"
         mensagem = f"""
         Olá {avaliacao.pesquisador.nome},
 
         Por favor, envie os documentos pendentes relacionados à sua avaliação anual.
+        Link para envio: {link}
 
         Obrigado,
         AvaliaQuick
@@ -114,7 +116,7 @@ def solicitar_novamente(request, avaliacao_id):
         )
 
         messages.success(request, 'E-mail enviado com sucesso!')
-        return redirect('avaliacao')
+    return redirect('avaliacao')
 
 def avaliacao(request):
     if not request.user.is_authenticated:
@@ -211,6 +213,41 @@ def apresentar_anteriores(request, id):
         'anteriores': True,
     })
 
+def enviar_arquivos_view(request, pendente_id, token):
+    # Busca o registro da pendência
+    pendente = get_object_or_404(Pendentes, id=pendente_id)
 
+    # Validação do token
+    #if str(pendente.token) != str(token):
+        #return HttpResponseForbidden("Token inválido. Acesso não autorizado.")
 
+    if request.method == 'POST':
+        form = EnvioArquivosForm(request.POST, request.FILES)
+        if form.is_valid():
+            arquivos = request.FILES.getlist('arquivos')
+
+            # Salva os arquivos no modelo Arquivo
+            for arquivo in arquivos:
+                Arquivo.objects.create(pendente=pendente.id, arquivo=arquivo)
+
+            # Atualiza o status da pendência
+            pendente.status = 'PEN'  # ou 'FIN' se quiser marcar como finalizado já
+            pendente.save()
+
+            # Redireciona para página de sucesso
+            return render(request, 'avaliaquick/sucesso.html', {
+                'pesquisador': pendente.pesquisador,
+                'avaliacao': pendente.avaliacaoAnual,
+            })
+    else:
+        form = EnvioArquivosForm()
+
+    return render(request, 'avaliaquick/formulario_envio.html', {
+        'form': form,
+        'pesquisador': pendente.pesquisador,
+        'avaliacao': pendente.avaliacaoAnual,
+    })
+
+def sucesso_view(request):
+    return render(request, 'avaliaquick/sucesso.html')
 # Create your views here.

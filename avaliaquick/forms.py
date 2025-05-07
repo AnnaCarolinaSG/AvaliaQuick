@@ -1,7 +1,9 @@
 from symtable import Class
 
 from django import forms
-from .models import Pesquisador
+from django.db import models
+
+from .models import Pesquisador, Arquivo
 
 class FormularioPesquisador(forms.ModelForm):
     class Meta:
@@ -25,3 +27,6 @@ class FormularioPesquisador(forms.ModelForm):
             raise forms.ValidationError("Já existe um pesquisador com essa matrícula.")
         return matricula
 
+
+class EnvioArquivosForm(forms.Form):
+    pass

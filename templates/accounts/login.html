@@ -21,7 +21,7 @@
               {% if msg %}
                 <span class="text-danger">{{ msg | safe }}</span>
               {% else %}
-                  Add your credentials
+                  Insira seus dados
               {% endif %}  
           </h6>
           
@@ -34,7 +34,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label class="bmd-label-floating">Username</label>
+                  <label class="bmd-label-floating">Nome de Usuário</label>
                   {{ form.username }}
                 </div>
               </div>
@@ -45,7 +45,7 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label class="bmd-label-floating">Password</label>
+                  <label class="bmd-label-floating">Senha</label>
                   {{ form.password }}
                 </div>
               </div>
@@ -57,7 +57,7 @@
 
             &nbsp; &nbsp; 
             <span class="pull-right">
-              Don't have an account? <a href="{% url 'register' %}" class="text-primary">Create</a>
+              Cadastre-se aqui! (temporario) <a href="{% url 'register' %}" class="text-primary">cadastrar</a>
             </span>
 
             <div class="clearfix"></div>

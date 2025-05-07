@@ -1,5 +1,8 @@
 from django.urls import path
-from avaliaquick.views import index, avaliacao, lista, anteriores, login_redirect_view, deletar_pesquisador, criar_avaliacao, fechar_avaliacao, reabrir_avaliacao, adicionar_arquivos, apresentar_anteriores, avaliar_pesquisador, solicitar_novamente, editar_pesquisador
+from avaliaquick.views import (index, avaliacao, lista, anteriores, login_redirect_view, deletar_pesquisador,
+                               criar_avaliacao, fechar_avaliacao, reabrir_avaliacao, adicionar_arquivos,
+                               apresentar_anteriores, avaliar_pesquisador, solicitar_novamente, editar_pesquisador,
+                               enviar_arquivos_view, sucesso_view)
 
 urlpatterns = [
     path('', login_redirect_view, name="login_redirect"),
@@ -16,5 +19,7 @@ urlpatterns = [
     path('pendentes/avaliar/<int:id>/', avaliar_pesquisador, name='avaliar_pesquisador'),
     path('solicitar-novamente/<int:avaliacao_id>/', solicitar_novamente, name='solicitar_novamente'),
     path('pesquisador/<int:id>/editar/', editar_pesquisador, name='editar_pesquisador'),
+    path('formulario-envio/<int:pendente_id>/<str:token>/', enviar_arquivos_view, name='enviar_arquivos'),
+    path('envio/sucesso/', sucesso_view, name='sucesso_envio'),
 
 ]
