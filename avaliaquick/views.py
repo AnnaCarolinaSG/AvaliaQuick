@@ -46,7 +46,9 @@ def fechar_avaliacao(request):
     if request.method == 'POST':
         avaliacao_id = request.POST.get('avaliacao_id')
         avaliacao = get_object_or_404(AvaliacaoAnual, id=avaliacao_id)
+        pendentes = Pendentes.objects.filter(avaliacaoAnual = avaliacao_id).count()
         avaliacao.status = 'FEC'
+        avaliacao.qtd_avaliados = pendentes
         avaliacao.data_fim = datetime.now()  # opcional
         avaliacao.save()
     return redirect('inicio')
@@ -132,7 +134,7 @@ def avaliacao(request):
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual).count()
     pesquisadores = Pesquisador.objects.all()
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
-    vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=periodoAtual)).count()
+    vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos='') | Q(arquivos__isnull=True)).count()
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
