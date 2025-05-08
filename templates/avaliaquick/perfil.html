@@ -28,7 +28,11 @@
     </div>
     <div class="card-body">
       <h6 class="card-category text-gray" style="font-size: 24px">
-        {{ pesquisador.nome }}
+        {% if pesquisador.nome %}
+          {{ pesquisador.nome }}
+        {% else %}
+          {{ pesquisador.username }}
+        {% endif %}
       </h6>
       <h4 class="card-title" style="font-size: 24px">
         {{ pesquisador.email }}

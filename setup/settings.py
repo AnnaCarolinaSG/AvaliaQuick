@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
+AUTH_USER_MODEL = 'avaliaquick.CustomUser'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

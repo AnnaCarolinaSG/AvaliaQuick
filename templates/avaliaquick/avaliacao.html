@@ -211,8 +211,8 @@
     <div class="tab-header">
         <button class="tab-button active" onclick="openTab('info')">INFORMAÇÕES</button>
         {% if not anteriores %}
-            <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
             <button class="tab-button" onclick="openTab('pendentes')">ENVIOS PENDENTES</button>
+            <button class="tab-button" onclick="openTab('prontos')">PRONTOS PARA AVALIAÇÃO</button>
             <button class="tab-button" onclick="openTab('finalizadas')">AVALIAÇÕES FINALIZADAS</button>
         {% endif %}
         <button class="tab-button" onclick="openTab('final')">AVALIAÇÃO FINAL</button>
@@ -258,7 +258,7 @@
                 <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
             {% endif %}
             <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
-            <p><strong>MÉDIA FINAL:</strong> 0</p>
+            <p><strong>MÉDIA FINAL:</strong> {{ periodoAtual.media_nota|default_if_none:0 }}</p>
         {% else %}
             <p>Nenhum período foi iniciado ainda.</p>
         {% endif %}

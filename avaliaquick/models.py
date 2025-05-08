@@ -1,7 +1,11 @@
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 import os
 import uuid
+
+class CustomUser(AbstractUser):
+    matricula = models.CharField(null=False, blank=False, unique=True, max_length=16)
 
 class AvaliacaoAnual(models.Model):
     data_inicio = models.DateField()

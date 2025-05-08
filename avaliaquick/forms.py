@@ -21,6 +21,11 @@ class FormularioPesquisador(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'ativo' in self.fields:
+            del self.fields['ativo']
+
     def clean_matricula(self):
         matricula = self.cleaned_data['matricula']
         if Pesquisador.objects.filter(matricula=matricula).exists():

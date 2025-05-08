@@ -2,13 +2,14 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo
-from django.db.models import Q
+from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo, CustomUser
+from django.db.models import Q, Avg
 from .forms import FormularioPesquisador, EnvioArquivosForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.http import HttpResponseForbidden, JsonResponse
+from django.contrib.auth import authenticate
 import random
 
 def login_redirect_view(request):
@@ -25,21 +26,10 @@ def index(request):
 
 def criar_avaliacao(request):
     if request.method == 'POST':
-        nova_avaliacao = AvaliacaoAnual.objects.create(
+        AvaliacaoAnual.objects.create(
             data_inicio=datetime.now(),
             status='ABE'
         )
-        pesquisadores = Pesquisador.objects.all()
-        pendentes = [
-            Pendentes(
-                pesquisador=p,
-                avaliacaoAnual=nova_avaliacao,
-                data_hora=datetime.now(),
-                status='PEN'
-            )
-            for p in pesquisadores
-        ]
-        Pendentes.objects.bulk_create(pendentes)
     return redirect('avaliacao')
 
 def fechar_avaliacao(request):
@@ -50,6 +40,11 @@ def fechar_avaliacao(request):
         avaliacao.status = 'FEC'
         avaliacao.qtd_avaliados = pendentes
         avaliacao.data_fim = datetime.now()  # opcional
+        media = Pendentes.objects.filter(
+            status='FIN',
+            avaliacaoAnual=avaliacao_id
+        ).aggregate(media_nota=Avg('nota'))['media_nota']
+        avaliacao.media_nota = media
         avaliacao.save()
     return redirect('inicio')
 
@@ -92,7 +87,8 @@ def avaliar_pesquisador(request, id):
         pendente.nota = random.randint(7, 10)
         pendente.save()
         messages.success(request, 'Pesquisador avaliado com sucesso!')
-    return redirect('inicio')
+
+    return redirect('avaliacao')
 
 def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':
@@ -135,6 +131,7 @@ def avaliacao(request):
     pesquisadores = Pesquisador.objects.all()
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
     vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos='') | Q(arquivos__isnull=True)).count()
+    media = periodoAtual.media_nota
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
@@ -144,6 +141,7 @@ def avaliacao(request):
         'finalizados': finalizados,
         'vazios': vazios,
         'periodoAtual': periodoAtual,
+        'media': media,
     })
 
 def editar_pesquisador(request, id):
@@ -182,10 +180,20 @@ def lista(request):
     })
 
 def deletar_pesquisador(request, id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
     if request.method == 'POST':
-        pesquisador = get_object_or_404(Pesquisador, id=id)
-        pesquisador.delete()
-        messages.success(request, 'Pesquisador removido com sucesso!')
+        senha = request.POST.get('senha_confirmacao')
+        user = authenticate(username=request.user.username, password=senha)
+
+        if user is not None:
+            pesquisador = get_object_or_404(Pesquisador, id=id)
+            pesquisador.delete()
+            messages.success(request, 'Pesquisador removido com sucesso!')
+        else:
+            messages.error(request, 'Senha incorreta. O pesquisador não foi removido.')
+
     return redirect('lista_pesquisadores')
 
 def anteriores(request):
@@ -206,13 +214,14 @@ def apresentar_anteriores(request, id):
     pesquisadores = Pesquisador.objects.all()
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id)
     vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=id)).count()
+    avaliacao = AvaliacaoAnual.objects.get(id=id)
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
         'avaliacoes': avaliacoes,
         'finalizados': finalizados,
         'vazios': vazios,
-        'periodoAtual': AvaliacaoAnual.objects.get(id=id),
+        'periodoAtual': avaliacao,
         'anteriores': True,
     })
 
@@ -291,13 +300,16 @@ def busca_global(request):
 
     return JsonResponse({'resultados': resultados})
 
-def perfil(request, id):
+def perfil(request, id, tipo):
     if not request.user.is_authenticated:
         raise PermissionDenied
 
-    pesquisador = get_object_or_404(Pesquisador, id=id)
+    if(tipo == 'pesquisador'):
+        usuario = get_object_or_404(Pesquisador, id=id)
+    else:
+        usuario = get_object_or_404(CustomUser, id=id)
     return render(request, 'avaliaquick/perfil.html', {
-        'pesquisador': pesquisador,
+        'pesquisador': usuario,
     })
 
 def detalhes_pesquisador(request, pk):

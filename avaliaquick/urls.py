@@ -22,6 +22,6 @@ urlpatterns = [
     path('pesquisador/<int:pk>/', detalhes_pesquisador, name='detalhes_pesquisador'),
     path('avaliacao/<int:pk>/', detalhes_avaliacao, name='detalhes_avaliacao'),
     path('pendente/<int:pk>/', detalhes_pendente, name='detalhes_pendente'),
-    path('perfil/<int:id>/', perfil, name="perfil"),
+    path('perfil/<int:id>/<str:tipo>/', perfil, name="perfil"),
 
 ]

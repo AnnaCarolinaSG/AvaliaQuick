@@ -233,7 +233,7 @@
 {% block content %}
 
 <h1>Envio de Arquivos</h1>
-<p>Olá, {{ pesquisador.nome }}. Envie os arquivos referentes à avaliação entre {{ avaliacao.data_inicio }} e {{ avaliacao.data_fim }}.</p>
+<p>Olá, {{ pesquisador.nome }}. Envie os arquivos referentes à avaliação com início em {{ avaliacao.data_inicio }}.</p>
 
 <form method="post" enctype="multipart/form-data">
       {% csrf_token %}

@@ -234,7 +234,7 @@
         {% for avaliacao in avaliacoes %}
             <div class="avaliacao-card">
                 <div class="avaliacao-data">
-                    <strong><em>Avaliações e Dados de {{ avaliacao.data_inicio }}</em></strong><br>
+                    <strong><em>Avaliação {{ avaliacao.data_inicio|date:"Y"|add:"-1" }}</em></strong><br>
                     <span>Média de notas: {{ avaliacao.media_nota }}</span>
                 </div>
                 <div class="avaliacao-info">

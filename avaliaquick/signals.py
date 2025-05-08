@@ -1,8 +1,9 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from .models import AvaliacaoAnual, Pesquisador, Pendentes
 from .utils import enviar_link_acesso
+from django.db.models import Avg
 
 @receiver(post_save, sender=AvaliacaoAnual)
 def enviar_emails_para_pesquisadores(sender, instance, created, **kwargs):
@@ -15,3 +16,21 @@ def enviar_emails_para_pesquisadores(sender, instance, created, **kwargs):
                 data_hora=timezone.now()
             )
             enviar_link_acesso(pendente)
+
+def atualizar_media(avaliacao):
+    media = Pendentes.objects.filter(
+        status='FIN',
+        avaliacaoAnual=avaliacao
+    ).aggregate(media_nota=Avg('nota'))['media_nota'] or 0.0
+    avaliacao.media_nota = round(media, 2)
+    avaliacao.save()
+
+@receiver(post_save, sender=Pendentes)
+def atualizar_media_apos_salvar(sender, instance, **kwargs):
+    if instance.status == 'FIN':
+        atualizar_media(instance.avaliacaoAnual)
+
+@receiver(post_delete, sender=Pendentes)
+def atualizar_media_apos_excluir(sender, instance, **kwargs):
+    if instance.status == 'FIN':
+        atualizar_media(instance.avaliacaoAnual)
