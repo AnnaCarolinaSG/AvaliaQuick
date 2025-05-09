@@ -3,12 +3,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo, CustomUser
-from django.db.models import Q, Avg
+from django.db.models import Q, Avg, Count
 from .forms import FormularioPesquisador, EnvioArquivosForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import JsonResponse
 from django.contrib.auth import authenticate
 import random
 
@@ -30,6 +30,7 @@ def criar_avaliacao(request):
             data_inicio=datetime.now(),
             status='ABE'
         )
+        messages.success(request, 'Período de avaliação iniciada com sucesso!')
     return redirect('avaliacao')
 
 def fechar_avaliacao(request):
@@ -46,7 +47,8 @@ def fechar_avaliacao(request):
         ).aggregate(media_nota=Avg('nota'))['media_nota']
         avaliacao.media_nota = media
         avaliacao.save()
-    return redirect('inicio')
+        messages.success(request, 'Período fechado com sucesso!')
+    return redirect('avaliacao')
 
 def reabrir_avaliacao(request):
     if request.method == 'POST':
@@ -55,7 +57,8 @@ def reabrir_avaliacao(request):
         avaliacao.status = 'ABE'
         avaliacao.data_fim = None  # opcional
         avaliacao.save()
-    return redirect('inicio')
+        messages.success(request, 'O período anterior foi reaberto!')
+    return redirect('avaliacao')
 
 
 def adicionar_arquivos(request):
@@ -268,7 +271,7 @@ def busca_global(request):
     resultados = []
 
     if termo:
-        pesquisadores = Pesquisador.objects.filter(nome__icontains=termo)[:5]
+        pesquisadores = Pesquisador.objects.filter(nome__icontains=termo)[:]
         for p in pesquisadores:
             resultados.append({
                 'label': p.nome,
@@ -277,7 +280,7 @@ def busca_global(request):
                 'id': p.id,
             })
 
-        avaliacoes = AvaliacaoAnual.objects.filter(status__icontains=termo)[:5]
+        avaliacoes = AvaliacaoAnual.objects.filter(status__icontains=termo)[:]
         for a in avaliacoes:
             resultados.append({
                 'label': f"Avaliação de {a.data_inicio.strftime('%d/%m/%Y')}",
@@ -287,7 +290,7 @@ def busca_global(request):
                 'status': a.status,
             })
 
-        pendentes = Pendentes.objects.filter(status__icontains=termo)[:5]
+        pendentes = Pendentes.objects.filter(status__icontains=termo)[:]
         for p in pendentes:
             resultados.append({
                 'label': f"Avaliação: {p.pesquisador.nome}",
@@ -323,4 +326,5 @@ def detalhes_avaliacao(request, pk):
 def detalhes_pendente(request, pk):
     pendente = get_object_or_404(Pendentes, pk=pk)
     return render(request, 'includes/navigation.html', {'pendente': pendente})
+
 # Create your views here.

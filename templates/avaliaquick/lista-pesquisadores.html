@@ -236,8 +236,14 @@
     {% if messages %}
         <div class="feedback-messages">
             {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <div class="alert
+                    {% if message.tags == 'error' %}
+                        alert-danger
+                    {% else %}
+                        alert-{{ message.tags }}
+                    {% endif %}
+                    alert-dismissible fade show">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     {{ message }}
@@ -321,7 +327,19 @@
             </form>
             <form method="post" class="meu-formulario" id="formAddPesquisador">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {% for field in form %}
+                    <div class="form-group">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger">
+                                {% for error in field.errors %}
+                                    <small>{{ error }}</small><br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
                 <button type="button" class="btn" onclick="mostrarPesquisadores()">Voltar</button>
                 <button type="submit" class="btn">Enviar</button>
             </form>
@@ -352,6 +370,16 @@
     function confirmarRemocao() {
         return confirm("Tem certeza que deseja remover este pesquisador?");
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function(alert) {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                setTimeout(() => alert.remove(), 500); // Remove do DOM após fade
+            });
+        }, 5000); // 5 segundos
+    });
 </script>
 
 
@@ -371,6 +399,7 @@
         document.getElementById('form-pesquisadores').style.display = 'none';
         document.getElementById('lista-pesquisadores').style.display = 'block';
         document.getElementById('btn-adicionar').style.display = 'block';
+        document.getElementById("formAddPesquisador").reset();
     }
 
     function formularioPesquisadores() {

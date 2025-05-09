@@ -199,13 +199,35 @@
       color: #000;
     }
 
+    .alert {
+        position: relative;
+        padding-right: 20px; /* Para o "x" não se sobrepor ao texto */
+    }
+
+    .alert .close-msg {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: transparent;
+        border: none;
+        font-size: 30px;
+        color: #000;
+        cursor: pointer;
+    }
+
 </style>
 
 {% endblock stylesheets %}
 
 {% block content %}
 
-<h2>Avaliação Fevereiro/Março 2025 - ano de 2024</h2>
+<h2>Avaliação {{ periodoAtual.data_inicio|date:"Y"|add:"-1" }} - {% with periodoAtual.data_inicio.month as mes %}
+    {% if mes <= 6 %}
+        1.{{ periodoAtual.data_inicio|date:"Y" }}
+    {% else %}
+        2.{{ periodoAtual.data_inicio|date:"Y" }}
+    {% endif %}
+{% endwith %} </h2>
 
 <div class="container">
     <div class="tab-header">
@@ -225,6 +247,19 @@
             </div>
         {% endif %}
     </div>
+
+    {% if messages %}
+        <div class="feedback-messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    <button type="button" class="close-msg" data-dismiss="alert" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <div id="info" class="tab-content active">
         {% if periodoAtual %}
@@ -465,6 +500,16 @@
         document.querySelector(`[onclick="openTab('${tabId}')"]`).classList.add('active');
         document.getElementById(tabId).classList.add('active');
     }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function(alert) {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                setTimeout(() => alert.remove(), 500); // Remove do DOM após fade
+            });
+        }, 5000); // 5 segundos
+    });
 </script>
 
 
@@ -488,12 +533,14 @@
         });
 
         // Exibe a div específica para a avaliação clicada
-        const detalheEspecifico = document.getElementById('detalhe-arquivos-final-' + id);
-        if(botao === 1) {
-            const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
-        }
+        const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
+        const detalheEspecificoFinal = document.getElementById('detalhe-arquivos-final-' + id);
+
         if (detalheEspecifico) {
             detalheEspecifico.style.display = 'block';
+        }
+        if (detalheEspecificoFinal) {
+            detalheEspecificoFinal.style.display = 'block'
         }
 
         // Exibe a seção de detalhes

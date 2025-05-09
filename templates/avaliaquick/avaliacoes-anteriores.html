@@ -241,10 +241,10 @@
                     <strong><em>Avaliados:</em></strong><br>
                     <span>{{ avaliacao.qtd_avaliados }}</span>
                 </div>
-                <div class="avaliacao-botoes">
+                <div class="avaliacao-botoes" style="display: flex; align-items: center; justify-content: center; height: 100px;">
                     <form method="post" action="{% url 'apresentar_anteriores'  avaliacao.id %}" style="display:inline;">
                         {% csrf_token %}
-                        <button type="submit" class="btn avaliar">Ver mais</button>
+                        <button type="submit" class="btn avaliar" style="width: 100%;">Ver mais</button>
                     </form>
                 </div>
             </div>
