@@ -134,7 +134,10 @@ def avaliacao(request):
     pesquisadores = Pesquisador.objects.all()
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
     vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos='') | Q(arquivos__isnull=True)).count()
-    media = periodoAtual.media_nota
+    if periodoAtual:
+        media = periodoAtual.media_nota
+    else:
+        media = None
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,

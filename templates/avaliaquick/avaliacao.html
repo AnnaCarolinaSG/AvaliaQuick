@@ -221,13 +221,14 @@
 
 {% block content %}
 
-<h2>Avaliação {{ periodoAtual.data_inicio|date:"Y"|add:"-1" }} - {% with periodoAtual.data_inicio.month as mes %}
-    {% if mes <= 6 %}
-        1.{{ periodoAtual.data_inicio|date:"Y" }}
-    {% else %}
-        2.{{ periodoAtual.data_inicio|date:"Y" }}
-    {% endif %}
-{% endwith %} </h2>
+<h2>Avaliação {% if periodoAtual %}{{ periodoAtual.data_inicio|date:"Y"|add:"-1" }} - {% with periodoAtual.data_inicio.month as mes %}
+                    {% if mes <= 6 %}
+                        1.{{ periodoAtual.data_inicio|date:"Y" }}
+                    {% else %}
+                        2.{{ periodoAtual.data_inicio|date:"Y" }}
+                    {% endif %}
+                {% endwith %}
+            {% else %}- Não iniciada{% endif %}</h2>
 
 <div class="container">
     <div class="tab-header">
