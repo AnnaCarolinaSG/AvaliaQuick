@@ -8,8 +8,8 @@ class CustomUser(AbstractUser):
     matricula = models.CharField(null=False, blank=False, unique=True, max_length=16)
 
 class AvaliacaoAnual(models.Model):
-    data_inicio = models.DateField()
-    data_fim = models.DateField(null=True)
+    data_inicio = models.DateTimeField()
+    data_fim = models.DateTimeField(null=True)
     media_nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
     qtd_avaliados = models.IntegerField(validators=[MinValueValidator(0)], null=True)
     OPCOES_STATUS = [

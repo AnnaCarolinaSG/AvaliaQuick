@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Página Inicial {% endblock %}
+{% block title %} Lista de Pesquisadores {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -213,6 +213,10 @@
         color: #000;
         cursor: pointer;
     }
+
+    .is-invalid {
+        border: 2px solid red;
+    }
 </style>
 
 {% endblock stylesheets %}
@@ -252,7 +256,7 @@
         </div>
     {% endif %}
 
-    <div id="lista-pesquisadores">
+    <div id="lista-pesquisadores" style="overflow-y: scroll; max-height: 800px;">
         {% for pesquisador in pesquisadores %}
             <div class="avaliacao-card">
                 <div class="avaliacao-data">
@@ -330,13 +334,18 @@
                 {% for field in form %}
                     <div class="form-group">
                         {{ field.label_tag }}
-                        {{ field }}
+                        {{ field.as_widget|safe }}
                         {% if field.errors %}
-                            <div class="text-danger">
+                            <div class="text-danger" id="erro-{{ field.name }}">
                                 {% for error in field.errors %}
                                     <small>{{ error }}</small><br>
                                 {% endfor %}
                             </div>
+                            <style>
+                                input[name="{{ field.name }}"] {
+                                    border: 2px solid red;
+                                }
+                            </style>
                         {% endif %}
                     </div>
                 {% endfor %}
@@ -346,6 +355,59 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const matriculaInput = document.querySelector('input[id="matricula"]');
+        const erroMatricula = document.getElementById('erro-matricula');
+
+        if (matriculaInput) {
+            matriculaInput.addEventListener('input', function () {
+                const erro = document.getElementById('erro-matricula');
+                if (erro) {
+                    erro.remove(); // remove a div de erro
+                    // ou: erro.style.display = 'none'; para apenas esconder
+                    // Também pode remover a borda vermelha:
+                    matriculaInput.style.border = '';
+                }
+            });
+        }
+    });
+
+    document.getElementById('formAddPesquisador').addEventListener('submit', async function(event) {
+    event.preventDefault(); // não envia ainda
+
+    // Verifica se há erro de matrícula exibido
+    const erroMatricula = document.getElementById('erro-matricula');
+    const valorMatricula = document.getElementById('matricula').value;
+    const matriculaInput = document.querySelector('input[id="matricula"]');
+    const formGroup = matriculaInput.closest('.form-group');
+
+    let response = await fetch(`/verificar-matricula/?matricula=${encodeURIComponent(valorMatricula)}`);
+    const data = await response.json();
+
+    // Verifica se o formulário é válido (validação HTML5) e se não tem erro de matrícula
+    if (this.checkValidity() && !erroMatricula && !data.existe) {
+        this.submit(); // envia se estiver tudo OK
+    } else {
+        // dispara mensagens de erro padrão
+        this.reportValidity();
+        if (!erroMatricula) {
+                // Cria nova div de erro
+            const novaDiv = document.createElement('div');
+            novaDiv.id = 'erro-matricula';
+            novaDiv.classList.add('text-danger');
+            novaDiv.innerHTML = '<small>Já existe um pesquisador com essa matrícula.</small>';
+
+            // Insere a div de erro dentro da div.form-group
+            formGroup.appendChild(novaDiv);
+
+            // Adiciona borda vermelha ao campo de matrícula
+            matriculaInput.style.border = '2px solid red';
+            }
+    }
+});
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -400,9 +462,18 @@
         document.getElementById('lista-pesquisadores').style.display = 'block';
         document.getElementById('btn-adicionar').style.display = 'block';
         document.getElementById("formAddPesquisador").reset();
+        document.getElementById("nome").value = "";
+        document.getElementById("matricula").value = "";
+        document.getElementById("email").value = "";
     }
 
     function formularioPesquisadores() {
+        const matriculaInput = document.querySelector('input[id="matricula"]');
+        matriculaInput.style.border = '';
+        if(document.getElementById('erro-matricula')) {
+            const erro = document.getElementById('erro-matricula');
+            erro.remove();
+        }
         document.getElementById('formAddPesquisador').style.display = 'block';
         document.getElementById('form-pesquisadores').style.display = 'block';
         document.getElementById('lista-pesquisadores').style.display = 'none';

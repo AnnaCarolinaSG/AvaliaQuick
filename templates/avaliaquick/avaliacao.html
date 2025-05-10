@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Página Inicial {% endblock %}
+{% block title %} Avaliações {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -215,6 +215,19 @@
         cursor: pointer;
     }
 
+    .btn-icone {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        color: #888;
+        font-size: 20px;
+    }
+
+    .btn-icone:hover {
+        color: #e53935; /* vermelho ao passar o mouse */
+    }
+
 </style>
 
 {% endblock stylesheets %}
@@ -304,7 +317,7 @@
         <!-- Lista de Avaliações -->
         <div id="lista-avaliacoes">
             <h2><strong><em>Prontos para avaliação</em></strong></h2>
-            {% for avaliacao in avaliacoes %}
+            {% for avaliacao in prontos_avs %}
                 {% if avaliacao.arquivos and avaliacao.status == 'PEN' or avaliacao.status == 'AND' %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-data">
@@ -325,7 +338,7 @@
                     </div>
                 {% endif %}
             {% empty %}
-                <p>Nenhuma avaliação disponível no momento.</p>
+                <p>Nenhuma avaliação pronta para avaliar disponível no momento.</p>
             {% endfor %}
         </div>
 
@@ -354,7 +367,7 @@
     <div id="pendentes" class="tab-content">
         <div id="lista-pendentes">
             <h2><strong><em>Envios Pendentes</em></strong></h2>
-            {% for avaliacao in avaliacoes %}
+            {% for avaliacao in pendentes_avs %}
                 {% if not avaliacao.arquivos %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-info">
@@ -365,10 +378,17 @@
                             <button class="btn avaliar" onclick="addArquivos({{ avaliacao.id }})">Adicionar Arquivos</button>
                             <button class="btn avaliar" onclick="solicitarNovamente({{ avaliacao.id }})">Solicitar Novamente</button>
                         </div>
+                        <form method="POST" action="{% url 'deletar_avaliacao' avaliacao.id %}"
+                              onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-icone" title="Excluir avaliação">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </form>
                     </div>
                 {% endif %}
             {% empty %}
-                <p>Nenhuma avaliação disponível no momento.</p>
+                <p>Nenhuma avaliação pendente disponível no momento.</p>
             {% endfor %}
         </div>
 
@@ -390,7 +410,7 @@
     <div id="finalizadas" class="tab-content">
         <div id="lista-finalizados">
             <h2><strong><em>Avaliações Finalizadas</em></strong></h2>
-            {% for avaliacao in avaliacoes %}
+            {% for avaliacao in finalizados_avs %}
                 {% if avaliacao.status == 'FIN' %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-info">
@@ -413,7 +433,7 @@
                     </div>
                 {% endif %}
             {% empty %}
-                <p>Nenhuma avaliação disponível no momento.</p>
+                <p>Nenhuma avaliação finalizada disponível no momento.</p>
             {% endfor %}
         </div>
     </div>
@@ -421,7 +441,7 @@
     <div id="final" class="tab-content">
         <div id="lista-final">
             <h2><strong><em>Avaliação Final</em></strong></h2>
-            {% for avaliacao in avaliacoes %}
+            {% for avaliacao in finalizados_avs %}
                 {% if avaliacao.status == 'FIN' %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-info">
@@ -446,7 +466,7 @@
                     </div>
                 {% endif %}
             {% empty %}
-                <p>Nenhuma avaliação disponível no momento.</p>
+                <p>Nenhuma avaliação finalizada disponível no momento.</p>
             {% endfor %}
         </div>
         <div id="detalhe-arquivos-final" style="display: none;">

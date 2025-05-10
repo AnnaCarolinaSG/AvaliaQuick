@@ -23,5 +23,8 @@ urlpatterns = [
     path('avaliacao/<int:pk>/', detalhes_avaliacao, name='detalhes_avaliacao'),
     path('pendente/<int:pk>/', detalhes_pendente, name='detalhes_pendente'),
     path('perfil/<int:id>/<str:tipo>/', perfil, name="perfil"),
+    path('verificar-matricula/', verificar_matricula, name='verificar_matricula'),
+    path('avaliacao/<int:id>/deletar/', deletar_avaliacao, name='deletar_avaliacao'),
+    path('notificacoes/media-vista/', marcar_media_como_vista, name='media_vista'),
 
 ]

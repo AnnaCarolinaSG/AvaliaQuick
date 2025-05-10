@@ -11,13 +11,16 @@ class FormularioPesquisador(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'nome': forms.TextInput(attrs={
-                'placeholder': 'Digite o nome do Pesquisador'
+                'placeholder': 'Digite o nome do Pesquisador',
+                'id': 'nome'
             }),
             'matricula': forms.NumberInput(attrs={
-                'placeholder': 'Digite a matrícula do Pesquisador'
+                'placeholder': 'Digite a matrícula do Pesquisador',
+                'id': 'matricula'
             }),
             'email': forms.EmailInput(attrs={
-                'placeholder': 'Digite o email do Pesquisador'
+                'placeholder': 'Digite o email do Pesquisador',
+                'id': 'email'
             }),
         }
 
@@ -26,9 +29,15 @@ class FormularioPesquisador(forms.ModelForm):
         if 'ativo' in self.fields:
             del self.fields['ativo']
 
+        for field in self.fields.values():
+            if field.widget.attrs.get('class'):
+                field.widget.attrs['class'] += ' '
+            else:
+                field.widget.attrs['class'] = ''
+
     def clean_matricula(self):
-        matricula = self.cleaned_data['matricula']
-        if Pesquisador.objects.filter(matricula=matricula).exists():
+        matricula = self.cleaned_data.get('matricula')
+        if Pesquisador.objects.filter(matricula=matricula, ativo=True).exists():
             raise forms.ValidationError("Já existe um pesquisador com essa matrícula.")
         return matricula
 

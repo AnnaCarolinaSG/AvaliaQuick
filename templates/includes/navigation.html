@@ -37,18 +37,18 @@
                 </a>
               </li>
               <li class="nav-item dropdown" title="Notificações">
-                  <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="material-icons">notifications</i>
-                    {% if qtd_notificacoes %}
-                      <span class="notification">{{ qtd_notificacoes }}</span>
-                    {% endif %}
-                    <p class="d-lg-none d-md-block">Notificações</p>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    {% for n in notificacoes %}
-                      <a class="dropdown-item" href="#">{{ n }}</a>
-                    {% endfor %}
-                  </div>
+                <a class="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class="material-icons">notifications</i>
+                  {% if qtd_notificacoes %}
+                    <span class="notification" id="qtd_notificacoes">{{ qtd_notificacoes }}</span>
+                  {% endif %}
+                  <p class="d-lg-none d-md-block">Notificações</p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink" id="notificacoesDropdown">
+                  {% for n in notificacoes %}
+                    <a style="cursor: pointer;" class="dropdown-item notificacao-item" data-tipo="{{ n.tipo }}">{{ n.texto }}</a>
+                  {% endfor %}
+                </div>
               </li>
 
               <li class="nav-item dropdown">
@@ -71,6 +71,101 @@
         
         </div>
       </nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const dropdownToggle = document.getElementById("navbarDropdownMenuLink");
+  const dropdownMenu = document.getElementById("notificacoesDropdown");
+  let mediaItemVisto = false;
+  let mediaValor = null;
+
+  // Detecta quando o dropdown for aberto
+  dropdownToggle.addEventListener("click", () => {
+    const mediaItem = dropdownMenu.querySelector('[data-tipo="media"]');
+
+    if (mediaItem && !mediaItemVisto) {
+      const mediaTexto = mediaItem.textContent.match(/[\d.]+/);
+      if (mediaTexto) {
+        mediaValor = mediaTexto[0];
+        mediaItemVisto = true; // Marca como visualizado
+      }
+    }
+  });
+
+  // Detecta quando o dropdown for fechado
+  document.addEventListener("click", (event) => {
+    if (
+      mediaItemVisto &&
+      !dropdownMenu.contains(event.target) &&
+      !dropdownToggle.contains(event.target)
+    ) {
+      fetch("{% url 'media_vista' %}", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: `media_valor=${mediaValor}`
+      }).then(res => res.json()).then(data => {
+        if (data.ok) {
+          const mediaItem = dropdownMenu.querySelector('[data-tipo="media"]');
+          if (mediaItem) mediaItem.remove();
+
+          const contador = document.getElementById("qtd_notificacoes");
+          if (contador) {
+            let atual = parseInt(contador.textContent);
+            if (!isNaN(atual) && atual > 0) {
+              const novoValor = atual - 1;
+              if (novoValor === 0) {
+                contador.remove();
+              } else {
+                contador.textContent = novoValor;
+              }
+            }
+          }
+        }
+      });
+
+      mediaItemVisto = false;
+      mediaValor = null;
+    }
+  });
+});
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const notificacoes = document.querySelectorAll('.notificacao-item');
+
+    notificacoes.forEach(item => {
+      item.addEventListener('click', () => {
+        const tipo = item.getAttribute('data-tipo');
+
+        switch (tipo) {
+          case 'pendentes':
+            window.location.href = "/avaliacao?aba=pendentes";
+            break;
+          case 'prontos':
+            window.location.href = "/avaliacao?aba=prontos";
+            break;
+          case 'andamento':
+            window.location.href = "/avaliacao?aba=andamento";
+            break;
+          case 'finalizadas':
+            window.location.href = "/avaliacao?aba=finalizadas";
+            break;
+          case 'media':
+            window.location.href = "/avaliacao?aba=finalizadas";
+            break;
+          default:
+            // Redirecionamento genérico ou nenhum
+            break;
+        }
+      });
+    });
+  });
+</script>
 
 <script>
     function abrirDash() {

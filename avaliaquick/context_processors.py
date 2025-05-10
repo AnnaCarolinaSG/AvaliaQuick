@@ -15,26 +15,37 @@ def notificacoes_contexto(request):
         em_andamento = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='AND').count()
         finalizados = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='FIN').count()
 
-        media = Pendentes.objects.filter(
+        if pendentes:
+            notificacoes.append({'texto': f"{pendentes} pendentes", 'tipo': 'pendentes'})
+
+        if prontos_para_avaliar:
+            notificacoes.append({'texto': f"{prontos_para_avaliar} prontos para avaliar", 'tipo': 'prontos'})
+
+        if em_andamento:
+            notificacoes.append({'texto': f"{em_andamento} avaliações em andamento", 'tipo': 'andamento'})
+
+        if finalizados:
+            notificacoes.append({'texto': f"{finalizados} avaliações finalizadas", 'tipo': 'finalizadas'})
+
+        media_atual = Pendentes.objects.filter(
             avaliacaoAnual=avaliacao_atual,
             status='FIN',
             nota__isnull=False
         ).aggregate(media=Avg('nota'))['media']
 
-        if pendentes:
-            notificacoes.append(f"{pendentes} pendentes")
+        media_antiga = request.session.get('media_ultima_vista')
 
-        if prontos_para_avaliar:
-            notificacoes.append(f"{prontos_para_avaliar} prontos para avaliar")
+        if media_atual is not None:
+            if media_antiga is None or round(media_atual, 1) != round(media_antiga, 1):
+                notificacoes.append({
+                    'texto': f"A média atual mudou para {round(media_atual, 1)}",
+                    'tipo': 'media',
+                    'media_valor': round(media_atual, 1)
+                })
 
-        if em_andamento:
-            notificacoes.append(f"{em_andamento} avaliações em andamento")
-
-        if finalizados:
-            notificacoes.append(f"{finalizados} avaliações finalizadas")
-
-        if media is not None:
-            notificacoes.append(f"A média atual é {round(media, 1)}")
+        if not avaliacao_atual:
+            notificacoes.append({'texto': "Nenhuma avaliação aberta no momento", 'tipo': 'info'})
+            aux = 1
     else:
         notificacoes.append("Nenhuma avaliação aberta no momento")
         aux = 1

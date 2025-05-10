@@ -33,21 +33,38 @@ def criar_avaliacao(request):
         messages.success(request, 'Período de avaliação iniciada com sucesso!')
     return redirect('avaliacao')
 
+
 def fechar_avaliacao(request):
     if request.method == 'POST':
         avaliacao_id = request.POST.get('avaliacao_id')
         avaliacao = get_object_or_404(AvaliacaoAnual, id=avaliacao_id)
-        pendentes = Pendentes.objects.filter(avaliacaoAnual = avaliacao_id).count()
+
+        # Verifica se ainda existem pesquisadores com status PEN ou AND
+        pendentes_ou_andamento = Pendentes.objects.filter(
+            avaliacaoAnual=avaliacao_id,
+            status__in=['PEN', 'AND']
+        ).exists()
+
+        if pendentes_ou_andamento:
+            messages.error(request,
+                           'Não é possível fechar o período: ainda há pesquisadores pendentes ou em andamento.')
+            return redirect('avaliacao')
+
+        # Se todos estiverem com status FIN
+        pendentes = Pendentes.objects.filter(avaliacaoAnual=avaliacao_id).count()
         avaliacao.status = 'FEC'
         avaliacao.qtd_avaliados = pendentes
-        avaliacao.data_fim = datetime.now()  # opcional
+        avaliacao.data_fim = datetime.now()
+
         media = Pendentes.objects.filter(
             status='FIN',
             avaliacaoAnual=avaliacao_id
         ).aggregate(media_nota=Avg('nota'))['media_nota']
+
         avaliacao.media_nota = media
         avaliacao.save()
         messages.success(request, 'Período fechado com sucesso!')
+
     return redirect('avaliacao')
 
 def reabrir_avaliacao(request):
@@ -129,9 +146,12 @@ def avaliacao(request):
     else:
         periodoAtual = AvaliacaoAnual.objects.order_by('-data_inicio').first()
     pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True))).count()
+    prontos_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True)))
+    pendentes_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & (Q(arquivos='') | Q(arquivos__isnull=True)))
+    finalizados_avs = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual)
     andamento = Pendentes.objects.filter(status='AND', avaliacaoAnual=periodoAtual).count()
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual).count()
-    pesquisadores = Pesquisador.objects.all()
+    pesquisadores = Pesquisador.objects.filter(ativo=True)
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
     vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos='') | Q(arquivos__isnull=True)).count()
     if periodoAtual:
@@ -142,6 +162,9 @@ def avaliacao(request):
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
         'avaliacoes': avaliacoes,
+        'pendentes_avs': pendentes_avs,
+        'prontos_avs': prontos_avs,
+        'finalizados_avs': finalizados_avs,
         'pendentes': pendentes,
         'andamento': andamento,
         'finalizados': finalizados,
@@ -176,7 +199,7 @@ def lista(request):
     else:
         form = FormularioPesquisador()
 
-    pesquisadores = Pesquisador.objects.all()
+    pesquisadores = Pesquisador.objects.filter(ativo=True)
     avaliacoes = Pendentes.objects.all()
 
     return render(request, 'avaliaquick/lista-pesquisadores.html', {
@@ -195,10 +218,11 @@ def deletar_pesquisador(request, id):
 
         if user is not None:
             pesquisador = get_object_or_404(Pesquisador, id=id)
-            pesquisador.delete()
+            pesquisador.ativo = False
+            pesquisador.save()
             messages.success(request, 'Pesquisador removido com sucesso!')
         else:
-            messages.error(request, 'Senha incorreta. O pesquisador não foi removido.')
+            messages.error(request, 'Senha incorreta. O pesquisador não foi desativado.')
 
     return redirect('lista_pesquisadores')
 
@@ -217,7 +241,7 @@ def apresentar_anteriores(request, id):
         raise PermissionDenied
 
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=id).count()
-    pesquisadores = Pesquisador.objects.all()
+    pesquisadores = Pesquisador.objects.filter(ativo=True)
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id)
     vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=id)).count()
     avaliacao = AvaliacaoAnual.objects.get(id=id)
@@ -329,5 +353,28 @@ def detalhes_avaliacao(request, pk):
 def detalhes_pendente(request, pk):
     pendente = get_object_or_404(Pendentes, pk=pk)
     return render(request, 'includes/navigation.html', {'pendente': pendente})
+
+def verificar_matricula(request):
+    matricula = request.GET.get('matricula', '')
+    existe = Pesquisador.objects.filter(matricula=matricula).exists()
+    return JsonResponse({'existe': existe})
+
+def deletar_avaliacao(request, id):
+    if request.method == 'POST':
+        avaliacao = get_object_or_404(Pendentes, id=id)
+        avaliacao.delete()
+        messages.success(request, "Avaliação excluída com sucesso.")
+    return redirect('avaliacao')
+
+
+def marcar_media_como_vista(request):
+    if request.method == "POST":
+        media_valor = request.POST.get('media_valor')
+        try:
+            request.session['media_ultima_vista'] = float(media_valor)
+            return JsonResponse({'ok': True})
+        except (TypeError, ValueError):
+            return JsonResponse({'ok': False, 'erro': 'Valor inválido'})
+    return JsonResponse({'ok': False, 'erro': 'Método não permitido'})
 
 # Create your views here.

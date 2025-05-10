@@ -9,7 +9,7 @@ from django.db.models import Avg
 def enviar_emails_para_pesquisadores(sender, instance, created, **kwargs):
     if created:
         print("SINAL DISPARADO: Enviando e-mails")
-        for pesquisador in Pesquisador.objects.all():
+        for pesquisador in Pesquisador.objects.filter(ativo=True):
             pendente = Pendentes.objects.create(
                 pesquisador=pesquisador,
                 avaliacaoAnual=instance,
