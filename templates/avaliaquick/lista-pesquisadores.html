@@ -231,9 +231,15 @@
             <button class="tab-button-titulo active" onclick="openTab('pesquisadores')" disabled>
                 Lista de Pesquisadores
             </button>
-            <button id="btn-adicionar" style="border-bottom-left-radius: 0;" class="btn btn-adicionar fecha" onclick="formularioPesquisadores()">
-                +Adicionar Pesquisador
-            </button>
+            {% if not acao %}
+                <button id="btn-adicionar" style="border-bottom-left-radius: 0;" class="btn btn-adicionar fecha" onclick="formularioPesquisadores()">
+                    +Adicionar Pesquisador
+                </button>
+            {% else %}
+                <button id="btn-adicionar" style="border-bottom-left-radius: 0;" class="btn btn-adicionar" onclick="window.location.href='/avaliacao'">
+                    Voltar
+                </button>
+            {% endif %}
         </div>
     </div>
 
@@ -268,30 +274,55 @@
                     <span>{{ pesquisador.email }}</span>
                 </div>
                 <div class="avaliacao-botoes">
-                    <button class="btn avaliar"
-                            onclick="editarPesquisador(this)"
-                            data-id="{{ pesquisador.id }}"
-                            data-nome="{{ pesquisador.nome }}"
-                            data-matricula="{{ pesquisador.matricula }}"
-                            data-email="{{ pesquisador.email }}">
-                        Editar
-                    </button>
-                    <button type="button" class="btn btn-danger"
-                            data-toggle="modal"
-                            data-target="#confirmModal"
-                            data-id="{{ pesquisador.id }}">
-                        Remover
-                    </button>
+                    {% if acao %}
+                      <div class="pesquisador-card">
+                        {% if acao == 'adicionar' %}
+                          <form method="POST" action="{% url 'adicionar_pesquisador' pesquisador.id %}">
+                            {% csrf_token %}
+                            <button class="btn">Adicionar</button>
+                          </form>
+                        {% elif acao == 'remover' %}
+                          <form method="POST" action="{% url 'deletar_avaliacao' pesquisador.id %}">
+                            {% csrf_token %}
+                            <button type="button" class="btn btn-danger"
+                                    data-toggle="modal"
+                                    data-target="#confirmModal"
+                                    data-id="{% for avaliacao in avaliacoes %}{% if avaliacao.pesquisador_id == pesquisador.id %}{{ avaliacao.id }}{% endif %}{% endfor %}">Remover</button>
+                          </form>
+                        {% endif %}
+                      </div>
+                    {% else %}
+                        <button class="btn avaliar"
+                                onclick="editarPesquisador(this)"
+                                data-id="{{ pesquisador.id }}"
+                                data-nome="{{ pesquisador.nome }}"
+                                data-matricula="{{ pesquisador.matricula }}"
+                                data-email="{{ pesquisador.email }}">
+                            Editar
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                data-toggle="modal"
+                                data-target="#confirmModal"
+                                data-pesquisador-id="{{ pesquisador.id }}">
+                            Remover
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         {% empty %}
-            <p>Nenhum pesquisador cadastrado.</p>
+            {% if not acao %}
+                <p>Nenhum pesquisador cadastrado.</p>
+            {% elif acao == 'adicionar' %}
+                <p>Nenhum pesquisador a ser adicionado.</p>
+            {% elif acao == 'remover' %}
+                <p>Nenhum pesquisador a ser removido.</p>
+            {% endif %}
         {% endfor %}
     </div>
 
     <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        <form method="post" id="formConfirmDelete">
+        <form method="post" id="{% if acao %}formDeleteAvaliacao{% else %}formConfirmDelete{% endif %}">
             {% csrf_token %}
             <input type="hidden" name="senha_confirmacao" id="senha_confirmacao">
             <div class="modal-content">
@@ -318,16 +349,36 @@
         <div id="pesquisadores" class="tab-content active">
             <form method="post" class="meu-formulario" action="{% url 'editar_pesquisador' 0 %}" id="formEditarPesquisador">
                 {% csrf_token %}
-                <input type="hidden" name="id" id="pesq-id">
-                <label>Nome:</label>
-                <input type="text" name="nome" id="pesq-nome" required><br>
-                <label>Matrícula:</label>
-                <input type="text" name="matricula" id="pesq-matricula" required><br>
-                <label>Email:</label>
-                <input type="email" name="email" id="pesq-email" required><br><br>
+                <div class="form-group">
+                    <input type="hidden" name="id" id="pesq-id">
+                </div>
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" name="nome" id="pesq-nome" required><br>
+                </div>
+                <div class="form-group">
+                    <label>Matrícula:</label>
+                    <input type="text" name="matricula" id="pesq-matricula" required><br>
+                    {% if form.errors.matricula %}
+                        <div class="text-danger" id="erroEditar-matricula">
+                            {% for error in form.errors.matricula %}
+                                <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                        <style>
+                            input[id="pesc-matricula"] {
+                                border: 2px solid red;
+                            }
+                        </style>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" name="email" id="pesq-email" required><br><br>
 
-                <button type="button" class="btn" onclick="mostrarPesquisadores()">Voltar</button>
-                <button type="submit" class="btn">Salvar</button>
+                    <button type="button" class="btn" onclick="mostrarPesquisadores()">Voltar</button>
+                    <button type="submit" class="btn">Salvar</button>
+                </div>
             </form>
             <form method="post" class="meu-formulario" id="formAddPesquisador">
                 {% csrf_token %}
@@ -407,6 +458,57 @@
             }
     }
 });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const matriculaInput = document.querySelector('input[id="pesq-matricula"]');
+        const erroMatricula = document.getElementById('erroEditar-matricula');
+
+        if (matriculaInput) {
+            matriculaInput.addEventListener('input', function () {
+                const erro = document.getElementById('erroEditar-matricula');
+                if (erro) {
+                    erro.remove(); // remove a div de erro
+                    // ou: erro.style.display = 'none'; para apenas esconder
+                    // Também pode remover a borda vermelha:
+                    matriculaInput.style.border = '';
+                }
+            });
+        }
+    });
+
+    document.getElementById('formEditarPesquisador').addEventListener('submit', async function(event) {
+    event.preventDefault(); // não envia ainda
+
+    // Verifica se há erro de matrícula exibido
+    const erroMatricula = document.getElementById('erroEditar-matricula');
+    const valorMatricula = document.getElementById('pesq-matricula').value;
+    const matriculaInput = document.querySelector('input[id="pesq-matricula"]');
+    const formGroup = matriculaInput.closest('.form-group');
+
+    let response = await fetch(`/verificar-matricula/?matricula=${encodeURIComponent(valorMatricula)}`);
+    const data = await response.json();
+
+    // Verifica se o formulário é válido (validação HTML5) e se não tem erro de matrícula
+    if (this.checkValidity() && !erroMatricula && !data.existe) {
+        this.submit(); // envia se estiver tudo OK
+    } else {
+        // dispara mensagens de erro padrão
+        this.reportValidity();
+        if (!erroMatricula) {
+                // Cria nova div de erro
+            const novaDiv = document.createElement('div');
+            novaDiv.id = 'erroEditar-matricula';
+            novaDiv.classList.add('text-danger');
+            novaDiv.innerHTML = '<small>Já existe um pesquisador com essa matrícula.</small>';
+
+            // Insere a div de erro dentro da div.form-group
+            formGroup.appendChild(novaDiv);
+
+            // Adiciona borda vermelha ao campo de matrícula
+            matriculaInput.style.border = '2px solid red';
+            }
+    }
+});
 </script>
 
 <script>
@@ -462,9 +564,13 @@
         document.getElementById('lista-pesquisadores').style.display = 'block';
         document.getElementById('btn-adicionar').style.display = 'block';
         document.getElementById("formAddPesquisador").reset();
+        document.getElementById("formEditarPesquisador").reset();
         document.getElementById("nome").value = "";
+        document.getElementById("pesc-nome").value = "";
         document.getElementById("matricula").value = "";
+        document.getElementById("pesc-matricula").value = "";
         document.getElementById("email").value = "";
+        document.getElementById("pesc-email").value = "";
     }
 
     function formularioPesquisadores() {
@@ -476,13 +582,13 @@
         }
         document.getElementById('formAddPesquisador').style.display = 'block';
         document.getElementById('form-pesquisadores').style.display = 'block';
-        document.getElementById('lista-pesquisadores').style.display = 'none';
         document.getElementById('formEditarPesquisador').style.display = 'none';
+        document.getElementById('lista-pesquisadores').style.display = 'none';
         document.getElementById('btn-adicionar').style.display = 'none';
     }
 
     function editarPesquisador(button) {
-        // Captura os dados
+
         const id = button.getAttribute('data-id');
         const nome = button.getAttribute('data-nome');
         const matricula = button.getAttribute('data-matricula');
@@ -504,17 +610,32 @@
         document.getElementById('formAddPesquisador').style.display = 'none';
         document.getElementById('btn-adicionar').style.display = 'none';
         document.getElementById('form-pesquisadores').style.display = 'block';
+
+        const matriculaInputEdit = document.querySelector('input[id="pesq-matricula"]');
+        matriculaInputEdit.style.border = '';
+        if(document.getElementById('erroEditar-matricula')) {
+            const erro = document.getElementById('erroEditar-matricula');
+            erro.remove();
+        }
     }
   </script>
 
   <script>
   $('#confirmModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
-    var pesquisadorId = button.data('id');
-    var form = $('#formConfirmDelete');
+    var pesquisadorId = button.data('pesquisador-id');
+
+    if($('#formConfirmDelete').length){
+        var form = $('#formConfirmDelete');
+        form.attr('action', '/pesquisador/deletar/' + pesquisadorId + '/');
+    } else {
+        var form = $('#formDeleteAvaliacao');
+        const avaliacaoId = button.data('id');
+        $('#formDeleteAvaliacao').attr('action', '/avaliacao/' + avaliacaoId + '/deletar/');
+    }
 
     // Atualiza o action dinamicamente
-    form.attr('action', '/pesquisador/deletar/' + pesquisadorId + '/');
+
   });
 </script>
 

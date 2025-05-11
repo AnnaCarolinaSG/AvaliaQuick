@@ -26,5 +26,10 @@ urlpatterns = [
     path('verificar-matricula/', verificar_matricula, name='verificar_matricula'),
     path('avaliacao/<int:id>/deletar/', deletar_avaliacao, name='deletar_avaliacao'),
     path('notificacoes/media-vista/', marcar_media_como_vista, name='media_vista'),
+    path('avaliacao/adicionar/', lista_para_adicionar, name='avaliacao_adicionar'),
+    path('avaliacao/remover/', lista_para_remover, name='avaliacao_remover'),
+    path('avaliacao/adicionar/<int:pesquisador_id>/', adicionar_pesquisador, name='adicionar_pesquisador'),
+    path('avaliacao/remover/<int:pesquisador_id>/', remover_pesquisador, name='remover_pesquisador'),
+
 
 ]

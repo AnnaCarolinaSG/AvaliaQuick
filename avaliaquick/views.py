@@ -101,7 +101,14 @@ def avaliar_pesquisador(request, id):
     if not request.user.is_authenticated:
         raise PermissionDenied
 
-    return redirect('criarFormularioA', id)
+    if request.method == 'POST':
+        pendente = get_object_or_404(Pendentes, id=id)
+        pendente.status = 'FIN'
+        pendente.nota = random.randint(7, 10)
+        pendente.save()
+        messages.success(request, 'Pesquisador avaliado com sucesso!')
+
+    return redirect('avaliacao')
 
 def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':
@@ -169,11 +176,14 @@ def avaliacao(request):
 def editar_pesquisador(request, id):
     pesquisador = get_object_or_404(Pesquisador, id=id)
     if request.method == 'POST':
-        pesquisador.nome = request.POST.get('nome')
-        pesquisador.matricula = request.POST.get('matricula')
-        pesquisador.email = request.POST.get('email')
-        pesquisador.save()
-        messages.success(request, 'Pesquisador atualizado com sucesso!')
+        try:
+            pesquisador.nome = request.POST.get('nome')
+            pesquisador.matricula = request.POST.get('matricula')
+            pesquisador.email = request.POST.get('email')
+            pesquisador.save()
+            messages.success(request, 'Pesquisador atualizado com sucesso!')
+        except IntegrityError:
+            messages.error(request, 'Já existe um pesquisador com essa matrícula.')
     return redirect('lista_pesquisadores')
 
 def lista(request):
@@ -321,6 +331,8 @@ def busca_global(request):
                 'arquivos': bool(p.arquivos),
             })
 
+    resultados = sorted(resultados, key=lambda x: x['label'].lower())
+
     return JsonResponse({'resultados': resultados})
 
 def perfil(request, id, tipo):
@@ -370,4 +382,37 @@ def marcar_media_como_vista(request):
             return JsonResponse({'ok': False, 'erro': 'Valor inválido'})
     return JsonResponse({'ok': False, 'erro': 'Método não permitido'})
 
-# Create your views here.
+
+def lista_para_adicionar(request):
+    periodo = AvaliacaoAnual.objects.filter(status='ABE').first()
+    pesquisadores_no_periodo = periodo.pendentes_set.values_list('pesquisador_id', flat=True)
+    pesquisadores_disponiveis = Pesquisador.objects.exclude(id__in=pesquisadores_no_periodo).filter(ativo=True)
+
+    return render(request, 'avaliaquick/lista-pesquisadores.html', {
+        'pesquisadores': pesquisadores_disponiveis,
+        'acao': 'adicionar'
+    })
+
+def lista_para_remover(request):
+    periodo = AvaliacaoAnual.objects.filter(status='ABE').first()
+    pesquisadores_no_periodo = Pesquisador.objects.filter(pendentes__avaliacaoAnual=periodo).distinct()
+    avaliacoes_no_periodo = periodo.pendentes_set.all()
+
+    return render(request, 'avaliaquick/lista-pesquisadores.html', {
+        'pesquisadores': pesquisadores_no_periodo,
+        'avaliacoes': avaliacoes_no_periodo,
+        'acao': 'remover'
+    })
+
+def adicionar_pesquisador(request, pesquisador_id):
+    if request.method == 'POST':
+        periodo = AvaliacaoAnual.objects.filter(status='ABE').first()
+        pesquisador = get_object_or_404(Pesquisador, id=pesquisador_id)
+        Pendentes.objects.create(pesquisador=pesquisador, avaliacaoAnual=periodo, status='PEN', data_hora=datetime.now())
+    return redirect('avaliacao')
+
+def remover_pesquisador(request, pesquisador_id):
+    if request.method == 'POST':
+        periodo = AvaliacaoAnual.objects.filter(status='ABE').first()
+        Pendentes.objects.filter(pesquisador_id=pesquisador_id, avaliacaoAnual=periodo).delete()
+    return redirect('avaliacao')
