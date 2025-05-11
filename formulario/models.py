@@ -42,9 +42,17 @@ class Formulario_A(models.Model):
     orientacao_mudancas = models.PositiveIntegerField(choices=SELECAO_CHOICES,null=False, blank=False)
     relacoes_colaboracao = models.PositiveIntegerField(choices=SELECAO_CHOICES, null=False, blank=False)
 
-    def __str__(self):
-        return f"Formulário #{self.id}"
+    total_A = models.FloatField(null=True, blank=False, default=0)
 
+    def calcular_media_A(self):
+        total = (self.visao_sistemica +
+                   self.visao_analitica +
+                   self.foco_planejamento +
+                   self.orientacao_mudancas +
+                   self.relacoes_colaboracao
+                   )/5
+        total = round(total, 3)
+        return total
 
 
 class Formulario_B(models.Model):
@@ -66,6 +74,37 @@ class Formulario_B(models.Model):
 
     #Parte B2
     treinamentos_capacitacoes = models.IntegerField(choices=SELECAO_UNICA_CHOICES, null=False, blank=False)
+
+    total_B = models.FloatField(null=True, blank=False, default=0)
+
+    def calcular_media_B(self):
+        total_B1 = (self.presidente_comite * 4 +
+                 self.membro_comite * 2 +
+                 self.presidente_portifolio * 4 +
+                 self.membro_portifolio * 2 +
+                 self.divulgacao_midea * 2 +
+                 self.formulacao_politicas * 2 +
+                 self.palestrante_disciplina_pos * 1 +
+                 self.parcerias_embrapa * 3 +
+                 self.parcerias_intituicoes * 3 +
+                 self.responsavel_laboratorio * 2 +
+                 self.acoes_gerenciais_locais * 1
+                )
+        if total_B1 >= 13 :
+            total = 4 * 0.75
+        elif 12 >= total_B1 > 8:
+            total = 3 * 0.75
+        elif 8 >= total_B1 > 5 :
+            total = 2 * 0.75
+        elif 5 >= total_B1 > 0:
+            total = 1 * 0.75
+        else:
+            total = 0
+
+        total += self.treinamentos_capacitacoes * 0.25
+        total = round(total, 3)
+
+        return total
 
 class Formulario_C(models.Model):
 
@@ -112,5 +151,82 @@ class Formulario_C(models.Model):
     organizacao_edicao_livros = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
     artigos_resumos_eventos = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
 
+    total_C = models.FloatField(null=True, blank=False, default=0)
 
+    def calcular_media_C(self):
+        total_C1 = (self.atuacao_editor + self.clareza_coesao) / 2 * 0.15
+        total_C2 = self.gestor_contratos * 0.05
+        total_C3 = 0
+        total_C3_A = 0
+        total_C3_B = 0
+        total_C3_C = 0
 
+        if self.lideranca_projeto:
+            total_C3_A += 4
+        if self.responsavel_solucao_contribuicao:
+            total_C3_A += 3
+        if self.responsavel_atividade:
+            total_C3_A += 2
+        if self.participacao_qualificacao:
+            total_C3_A += 4
+        if self.coordenacao_propostas_projetos:
+            total_C3_A += 4
+        if self.membro_propostas_projetos:
+            total_C3_A += 2
+
+        total_C3_A += self.valor_recursos_financeiros_comprovados
+
+        if total_C3_A >= 13 :
+            total_C3 += 4 * 0.5
+        elif 12 >= total_C3_A > 8:
+            total_C3 += 3 * 0.5
+        elif 8 >= total_C3_A > 5 :
+            total_C3 += 2 * 0.5
+        elif 5 >= total_C3_A > 0:
+            total_C3 += 1 * 0.5
+        else:
+            total_C3 += 0
+
+        total_C3_B = (
+            self.instrutor_eventos_tecnicos * 2 +
+            self.apresentacao_tecnologias_embrapa +
+            self.responsvel_capacitacao_ead * 2 +
+            self.revisor_capacitacao_ead * 2 +
+            self.membro_capacitacao_ead * 2 +
+            self.coordenador_novas_capacitacoes * 2
+        )
+        if total_C3_B >= 6 :
+            total_C3 += 4 * 0.25
+        elif total_C3_B == 5 or total_C3_B == 4 :
+            total_C3 += 3 * 0.25
+        elif total_C3_B == 3 or total_C3_B == 2 :
+            total_C3 += 2 * 0.25
+        elif total_C3_B <= 1 :
+            total_C3 += 1 * 0.25
+        else:
+            total_C3 += 0
+
+        total_C3_C = (
+            self.artigo_a1 * 4 +
+            self.artigo_a2_a3_a4 * 3.5 +
+            self.artigo_b1_b2 * 3 +
+            self.artigo_b3_inferior * 2 +
+            self.producoes_tecnicas_embrapa * 2 +
+            self.elaboracao_cap_livros * 2 +
+            self.organizacao_edicao_livros * 4 +
+            self.artigos_resumos_eventos
+        )
+        if total_C3_C >= 7 :
+            total_C3 += 4 * 0.25
+        elif total_C3_C == 6 or total_C3_C == 5 :
+            total_C3 += 3 * 0.25
+        elif total_C3_C == 4 or total_C3_C == 3 :
+            total_C3 += 2 * 0.25
+        elif total_C3_C == 2 or total_C3_C == 1 :
+            total_C3 += 1 * 0.25
+        else:
+            total_C3 += 0
+
+        total = total_C1 + total_C2 + (total_C3 * 0.8)
+
+        return total

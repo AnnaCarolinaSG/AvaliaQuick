@@ -15,9 +15,8 @@ def criarFormularioA(request, id):
             formulario = form.save(commit=False)
             formulario.avaliacao = avaliacao
             formulario.save() # Salva os campos do formulário
-
-
-            print(form.cleaned_data)
+            formulario.total_A = formulario.calcular_media_A()
+            formulario.save()
             return redirect('criarFormularioB', id)
         else:
             print(form.errors)
@@ -44,7 +43,8 @@ def criarFormularioB(request, id):
             formulario = form.save(commit=False)
             formulario.avaliacao = avaliacao
             formulario.save()
-
+            formulario.total_B = formulario.calcular_media_B()
+            formulario.save()
             return redirect('criarFormularioC', id)
         else:
             print(form.errors)
@@ -72,10 +72,20 @@ def criarFormularioC(request, id):
             formulario = form.save(commit=False)
             formulario.avaliacao = avaliacao
             formulario.save()
+            formulario.total_C = formulario.calcular_media_C()
+            formulario.save()
             messages.success(request,'Pesquisador avaliado com sucesso.')
 
             pendente = get_object_or_404(Pendentes, id=id)
-            pendente.nota = random.randint(7, 10)
+            formulario_A = Formulario_A.objects.get(avaliacao=avaliacao)
+            formulario_B = Formulario_B.objects.get(avaliacao=avaliacao)
+
+            total_A = formulario_A.total_A or 0
+            total_B = formulario_B.total_B or 0
+            total_C = formulario.total_C or 0
+
+            nota_final = total_A * 0.1 + total_B * 0.2 + total_C * 0.7
+            pendente.nota = round(nota_final, 3)
             pendente.status = 'FIN'
             pendente.save()
 

@@ -38,6 +38,9 @@ class FormularioAForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'avaliacao' in self.fields:
             del self.fields['avaliacao']
+        if 'total_A' in self.fields:
+            del self.fields['total_A']
+
 
 
 class FormularioBForm(forms.ModelForm):
@@ -64,6 +67,8 @@ class FormularioBForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'avaliacao' in self.fields:
             del self.fields['avaliacao']
+        if 'total_B' in self.fields:
+            del self.fields['total_B']
 
 class FormularioCForm(forms.ModelForm):
     # Parte C1
@@ -139,3 +144,5 @@ class FormularioCForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if 'avaliacao' in self.fields:
             del self.fields['avaliacao']
+        if 'total_C' in self.fields:
+            del self.fields['total_C']
