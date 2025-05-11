@@ -1,15 +1,24 @@
+import random
+
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Formulario_A, Formulario_B, Formulario_C
 from .forms import FormularioAForm, FormularioBForm, FormularioCForm
+from avaliaquick.models import Pendentes
 
 #--FORMS A--
-def criarFormularioA(request):
+def criarFormularioA(request, id):
     if request.method == 'POST':
         form = FormularioAForm(request.POST)
+        avaliacao = get_object_or_404(Pendentes, id=id)
         if form.is_valid():
-            form.save()
+            formulario = form.save(commit=False)
+            formulario.avaliacao = avaliacao
+            formulario.save() # Salva os campos do formulário
+
+
             print(form.cleaned_data)
-            return redirect('/formB')
+            return redirect('criarFormularioB', id)
         else:
             print(form.errors)
     else:
@@ -27,12 +36,16 @@ def editarFormularioA(request, id):
     return  render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
 
 #--FORMS B--
-def criarFormularioB(request):
+def criarFormularioB(request, id):
     if request.method == 'POST':
         form = FormularioBForm(request.POST)
+        avaliacao = get_object_or_404(Pendentes, id=id)
         if form.is_valid():
-            form.save()
-            return redirect('/formC')
+            formulario = form.save(commit=False)
+            formulario.avaliacao = avaliacao
+            formulario.save()
+
+            return redirect('criarFormularioC', id)
         else:
             print(form.errors)
     else:
@@ -51,12 +64,22 @@ def editarFormularioB(request, id):
 
 
 #--FORMS C--
-def criarFormularioC(request):
+def criarFormularioC(request, id):
     if request.method == 'POST':
         form = FormularioCForm(request.POST)
+        avaliacao = get_object_or_404(Pendentes, id=id)
         if form.is_valid():
-            form.save()
-            return redirect('/avaliacao')
+            formulario = form.save(commit=False)
+            formulario.avaliacao = avaliacao
+            formulario.save()
+            messages.success(request,'Pesquisador avaliado com sucesso.')
+
+            pendente = get_object_or_404(Pendentes, id=id)
+            pendente.nota = random.randint(7, 10)
+            pendente.status = 'FIN'
+            pendente.save()
+
+            return redirect('avaliacao')
         else:
             print(form.errors)
     else:

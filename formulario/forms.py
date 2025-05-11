@@ -34,6 +34,11 @@ class FormularioAForm(forms.ModelForm):
         model = Formulario_A
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'avaliacao' in self.fields:
+            del self.fields['avaliacao']
+
 
 class FormularioBForm(forms.ModelForm):
 
@@ -54,6 +59,11 @@ class FormularioBForm(forms.ModelForm):
     class Meta:
         model = Formulario_B
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'avaliacao' in self.fields:
+            del self.fields['avaliacao']
 
 class FormularioCForm(forms.ModelForm):
     # Parte C1
@@ -124,3 +134,8 @@ class FormularioCForm(forms.ModelForm):
     class Meta:
         model = Formulario_C
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'avaliacao' in self.fields:
+            del self.fields['avaliacao']
