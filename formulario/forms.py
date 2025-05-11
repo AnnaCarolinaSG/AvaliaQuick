@@ -79,37 +79,13 @@ class FormularioCForm(forms.ModelForm):
     gestor_contratos = forms.TypedChoiceField(choices=VALOR_CONTRATO_CONVENIO_CHOICES,widget=forms.RadioSelect(attrs={'class': 'selecao-unica'}))
 
     # Parte C3 - ITEM A
-    lideranca_projeto = forms.BooleanField(
-        required=False,
-        label="Liderança de Projetos",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
-    responsavel_solucao_contribuicao = forms.BooleanField(
-        required=False,
-        label="Responsável por Solução e/ou Contribuição para Inovação",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
-    responsavel_atividade = forms.BooleanField(
-        required=False,
-        label="Responsável por atividade",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
+    lideranca_projeto = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
+    responsavel_solucao_contribuicao = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
+    responsavel_atividade = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
     # =====
-    participacao_qualificacao = forms.BooleanField(
-        required=False,
-        label="Participa do processo de qualificação dos ativos tecnológicos entregues como resultados em escalas TRLs 4,0 a 8,0 (comprovado pela CHTT)",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
-    coordenacao_propostas_projetos = forms.BooleanField(
-        required=False,
-        label="Coordena a articulação e elaboração de propostas de projetos, a serem submetidos em chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
-    membro_propostas_projetos = forms.BooleanField(
-        required=False,
-        label="Coordena a articulação e elaboração de propostas de projetos, a serem submetidos em chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)",
-        widget=forms.CheckboxInput(attrs={'class': 'checkbox-redondo'})
-    )
+    participacao_qualificacao = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
+    coordenacao_propostas_projetos = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
+    membro_propostas_projetos = forms.ChoiceField(choices=QUANTIDADE_CHOICES, widget=widget_config)
 
     valor_recursos_financeiros_comprovados = forms.ChoiceField(
         choices=VALOR_RECURSOS_FINANCEIROS_COMPROVADOS_CHOICES,

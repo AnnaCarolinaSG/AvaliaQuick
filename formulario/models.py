@@ -4,7 +4,7 @@ from django.db import models
 from avaliaquick.models import Pendentes
 
 SELECAO_CHOICES = [(i, str(i)) for i in range(5)]
-QUANTIDADE_CHOICES = [(i, str(i)) for i in range(5)]
+QUANTIDADE_CHOICES = [(i, str(i)) for i in range(11)]
 SELECAO_UNICA_CHOICES = [
     (4, "Duas ou mais capacitações e ou treinamentos realizados pelo pesquisador"),
     (3, "Uma capacitação e ou treinamento realizada pelo pesquisador"),
@@ -119,16 +119,16 @@ class Formulario_C(models.Model):
 
     #Parte C3 - ITEM A
     #Participação em projetos SEG
-    lideranca_projeto = models.BooleanField(default=False, null=False, blank=False)
-    responsavel_solucao_contribuicao = models.BooleanField(default=False, null=False, blank=False)
-    responsavel_atividade = models.BooleanField(default=False, null=False, blank=False)
+    lideranca_projeto = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
+    responsavel_solucao_contribuicao = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
+    responsavel_atividade = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
 
     #Desenvolvimentos ativos tecnológicos
-    participacao_qualificacao = models.BooleanField(default=False, null=False, blank=False)
+    participacao_qualificacao = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
 
     #Articulação e captação de recursos externos e internos
-    coordenacao_propostas_projetos = models.BooleanField(default=False, null=False, blank=False)
-    membro_propostas_projetos = models.BooleanField(default=False, null=False, blank=False)
+    coordenacao_propostas_projetos = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
+    membro_propostas_projetos = models.IntegerField(choices=QUANTIDADE_CHOICES, null=False, blank=False)
     valor_recursos_financeiros_comprovados = models.IntegerField(choices=VALOR_RECURSOS_FINANCEIROS_COMPROVADOS_CHOICES, null=False, blank=False, default=0.00)
 
     #ITEM B
@@ -161,18 +161,14 @@ class Formulario_C(models.Model):
         total_C3_B = 0
         total_C3_C = 0
 
-        if self.lideranca_projeto:
-            total_C3_A += 4
-        if self.responsavel_solucao_contribuicao:
-            total_C3_A += 3
-        if self.responsavel_atividade:
-            total_C3_A += 2
-        if self.participacao_qualificacao:
-            total_C3_A += 4
-        if self.coordenacao_propostas_projetos:
-            total_C3_A += 4
-        if self.membro_propostas_projetos:
-            total_C3_A += 2
+        total_C3_A = (
+            self.lideranca_projeto * 4 +
+            self.responsavel_solucao_contribuicao * 3 +
+            self.responsavel_atividade * 2 +
+            self.participacao_qualificacao * 4 +
+            self.coordenacao_propostas_projetos * 4 +
+            self.membro_propostas_projetos * 2
+        )
 
         total_C3_A += self.valor_recursos_financeiros_comprovados
 
@@ -228,5 +224,6 @@ class Formulario_C(models.Model):
             total_C3 += 0
 
         total = total_C1 + total_C2 + (total_C3 * 0.8)
+        total = round(total, 3)
 
         return total

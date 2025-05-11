@@ -63,26 +63,32 @@
 
 <!-- ------------------ -->
 
-    <div class="campo-checkbox"style="margin-left: 15px; margin-bottom: 15px">
-  {{ form.lideranca_projeto }}
-  <label for="{{ form.lideranca_projeto.id_for_label }}" style="margin-left: 15px">
-    {{ form.lideranca_projeto.label }}
-  </label>
-</div>
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Liderança de Projetos</p>
+        </div>
+        <div class="widget-quantidade">
+            <td>{{ form.lideranca_projeto }}</td>
+        </div>
+    </div>
 
-<div class="campo-checkbox" style="margin-left: 15px; margin-bottom: 15px">
-  {{ form.responsavel_solucao_contribuicao }}
-  <label for="{{ form.responsavel_solucao_contribuicao.id_for_label }}" style="margin-left: 15px">
-    {{ form.responsavel_solucao_contribuicao.label }}
-  </label>
-</div>
+<div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Responsável por Solução e/ou Contribuição para Inovação</p>
+        </div>
+        <div class="widget-quantidade">
+            <td>{{ form.responsavel_solucao_contribuicao }}</td>
+        </div>
+    </div>
 
-<div class="campo-checkbox" style="margin-left: 15px; margin-bottom: 15px">
-  {{ form.responsavel_atividade }}
-  <label for="{{ form.responsavel_atividade.id_for_label }}" style="margin-left: 15px">
-    {{ form.responsavel_atividade.label }}
-  </label>
-</div>
+<div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Responsável por atividade</p>
+        </div>
+        <div class="widget-quantidade">
+            <td>{{ form.responsavel_atividade }}</td>
+        </div>
+    </div>
 
     <!-- ------------------ -->
 
@@ -90,12 +96,12 @@
         • Desenvolvimento de ativos tecnológicos
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left; margin-left: 15px;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
-             {{ form.participacao_qualificacao }}
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Participa do processo  de qualificação dos ativos tecnológicos entregues como resultados em escalas TRLs 4,0 a 8,0 (comprovado pela CHTT)</p>
         </div>
-        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
-            Participa do processo de qualificação dos ativos tecnológicos entregues como resultados em escalas TRLs 4,0 a 8,0 (comprovado pela CHTT)
+        <div class="widget-quantidade">
+            <td>{{ form.participacao_qualificacao }}</td>
         </div>
     </div>
 
@@ -105,21 +111,21 @@
         • Articulação e captação de recursos externos e internos
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left; margin-left: 15px;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
-             {{ form.coordenacao_propostas_projetos }}
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Coordena a articulação e elaboração de propostas de projetos, a serem submetidos em chamadas SEG, editais externos e contratos de parcerias   (registradas no SEER e ou SEI)</p>
         </div>
-        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
-            Coordena a articulação e elaboração de propostas de projetos, a serem submetidos em chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)
+        <div class="widget-quantidade">
+            <td>{{ form.coordenacao_propostas_projetos }}</td>
         </div>
     </div>
 
-    <div class="parametro_quant" style="margin-top: 10px; justify-content: left; margin-left: 15px;">
-        <div class="coluna_quantidade" style="margin-right: -30px">
-             {{ form.membro_propostas_projetos }}
+    <div class="parametro_quant" style="margin-top: -5px;">
+        <div class="parametro-desc">
+            <p>• Membro de propostas de projetos a serem submetidos a editais  de chamadas SEG, editais externos e contratos de parcerias   (registradas no SEER e ou SEI)</p>
         </div>
-        <div class="parametro-desc" style="margin-right: 60px; margin-left: 15px;">
-            Membro de propostas de projetos a serem submetidos a editais de chamadas SEG, editais externos e contratos de parcerias (registradas no SEER e ou SEI)
+        <div class="widget-quantidade">
+            <td>{{ form.membro_propostas_projetos }}</td>
         </div>
     </div>
 

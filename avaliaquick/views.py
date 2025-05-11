@@ -101,14 +101,7 @@ def avaliar_pesquisador(request, id):
     if not request.user.is_authenticated:
         raise PermissionDenied
 
-    if request.method == 'POST':
-        pendente = get_object_or_404(Pendentes, id=id)
-        pendente.status = 'FIN'
-        pendente.nota = random.randint(7, 10)
-        pendente.save()
-        messages.success(request, 'Pesquisador avaliado com sucesso!')
-
-    return redirect('avaliacao')
+    return redirect('criarFormularioA', id)
 
 def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':
