@@ -157,15 +157,15 @@ def avaliacao(request):
         periodoAtual = AvaliacaoAnual.objects.filter(status='ABE').order_by('-data_inicio').first()
     else:
         periodoAtual = AvaliacaoAnual.objects.order_by('-data_inicio').first()
-    pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True))).count()
-    prontos_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & ~(Q(arquivos='') | Q(arquivos__isnull=True)))
-    pendentes_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & (Q(arquivos='') | Q(arquivos__isnull=True)))
+    pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=False)).distinct().count()
+    prontos_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=False)).distinct()
+    pendentes_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=True)).distinct()
     finalizados_avs = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual)
     andamento = Pendentes.objects.filter(status='AND', avaliacaoAnual=periodoAtual).count()
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual).count()
     pesquisadores = Pesquisador.objects.filter(ativo=True)
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
-    vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos='') | Q(arquivos__isnull=True)).count()
+    vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos_enviados__isnull=True)).distinct().count()
     if periodoAtual:
         media = periodoAtual.media_nota
     else:
@@ -257,8 +257,8 @@ def apresentar_anteriores(request, id):
 
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=id).count()
     pesquisadores = Pesquisador.objects.filter(ativo=True)
-    avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id)
-    vazios = Pendentes.objects.filter(Q(arquivos='') | Q(arquivos__isnull=True) & Q(avaliacaoAnual=id)).count()
+    avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id, status='FIN')
+    vazios = Pendentes.objects.filter(Q(arquivos_enviados__isnull=True) & Q(avaliacaoAnual=id)).distinct().count()
     avaliacao = AvaliacaoAnual.objects.get(id=id)
 
     return render(request, 'avaliaquick/avaliacao.html', {
@@ -340,7 +340,7 @@ def busca_global(request):
                 'url': reverse('detalhes_pendente', args=[p.id]),
                 'id': p.id,
                 'status': p.status,
-                'arquivos': bool(p.arquivos),
+                'arquivos': bool(p.arquivos_enviados),
             })
 
     resultados = sorted(resultados, key=lambda x: x['label'].lower())

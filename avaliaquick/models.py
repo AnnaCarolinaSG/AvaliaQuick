@@ -33,7 +33,6 @@ class Pendentes(models.Model):
     pesquisador = models.ForeignKey(Pesquisador, on_delete=models.CASCADE)
     avaliacaoAnual = models.ForeignKey(AvaliacaoAnual, on_delete=models.CASCADE, default='')
     data_hora = models.DateTimeField(null=False, blank=False)
-    arquivos = models.FileField(upload_to=caminho_arquivo, null=True)
 
     OPCOES_STATUS = [
         ('PEN', 'Pendente'),
@@ -43,20 +42,22 @@ class Pendentes(models.Model):
     status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='PEN')
     nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
 
-    def extensao_arquivo(self):
-        if self.arquivos:
-            nome = self.arquivos.name
-            return os.path.splitext(nome)[1].lower()  # retorna tipo '.pdf', '.docx'
-        return ''
 
-    def nome_arquivo(self):
-        if self.arquivos:
-            nome_completo = os.path.basename(self.arquivos.name)  # ex: Documento_6Aod4oP.pdf
-            nome_sem_extensao, _ = os.path.splitext(nome_completo)  # separa nome e extensão
-            return nome_sem_extensao
-        return ''
 
 class Arquivo(models.Model):
     pendente = models.ForeignKey(Pendentes, on_delete=models.CASCADE, related_name='arquivos_enviados')
     arquivo = models.FileField(upload_to='arquivos/')
     data_upload = models.DateTimeField(auto_now_add=True)
+
+    def extensao_arquivo(self):
+        if self.arquivo:
+            nome = self.arquivo.name
+            return os.path.splitext(nome)[1].lower()  # retorna tipo '.pdf', '.docx'
+        return ''
+
+    def nome_arquivo(self):
+        if self.arquivo:
+            nome_completo = os.path.basename(self.arquivo.name)  # ex: Documento_6Aod4oP.pdf
+            nome_sem_extensao, _ = os.path.splitext(nome_completo)  # separa nome e extensão
+            return nome_sem_extensao
+        return ''

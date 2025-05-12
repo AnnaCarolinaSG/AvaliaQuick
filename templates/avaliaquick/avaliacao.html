@@ -327,7 +327,7 @@
         <div id="lista-avaliacoes">
             <h2><strong><em>Prontos para avaliação</em></strong></h2>
             {% for avaliacao in prontos_avs %}
-                {% if avaliacao.arquivos and avaliacao.status == 'PEN' or avaliacao.status == 'AND' %}
+                {% if avaliacao.arquivos_enviados and avaliacao.status == 'PEN' or avaliacao.status == 'AND' %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-data">
                             <span>{{ avaliacao.data_hora|date:"H:i" }}</span><br>
@@ -356,18 +356,20 @@
             <h3><em id="nome-pesquisador"></em></h3>
 
             {% for avaliacao in avaliacoes %}
-                {% if avaliacao.arquivos %}
-                    <div id="detalhe-arquivos-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
-                        <p><em>{{ avaliacao.arquivos.name|slice:"-50" }}</em></p>
-                        <div class="arquivo-item">
-                            <span>📄 <strong>{{ avaliacao.nome_arquivo }}</strong><br>{{ avaliacao.extensao_arquivo }} - {{ avaliacao.arquivos.size|filesizeformat }}</span>
-                            <div class="arquivo-botoes">
-                                <a href="{{ avaliacao.arquivos.url }}" class="btn" target="_blank">Visualizar</a>
-                                <a href="{{ avaliacao.arquivos.url }}" class="btn" download>Baixar ⬇️</a>
+                <div id="detalhe-arquivos-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
+                    {% if avaliacao.arquivos_enviados %}
+                        {% for arquivo in avaliacao.arquivos_enviados.all %}
+                            <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
+                            <div class="arquivo-item">
+                                <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
+                                <div class="arquivo-botoes">
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             {% endfor %}
             <button class="btn" onclick="voltarParaPrincipal(1)">Voltar</button>
         </div>
@@ -377,7 +379,7 @@
         <div id="lista-pendentes">
             <h2><strong><em>Envios Pendentes</em></strong></h2>
             {% for avaliacao in pendentes_avs %}
-                {% if not avaliacao.arquivos %}
+                {% if avaliacao.arquivos_enviados %}
                     <div class="avaliacao-card">
                         <div class="avaliacao-info">
                             <strong><em>{{ avaliacao.pesquisador.nome }}</em></strong><br>
@@ -482,17 +484,19 @@
             <h3><em id="nome-pesquisador"></em></h3>
 
             {% for avaliacao in avaliacoes %}
-                {% if avaliacao.arquivos and avaliacao.status == 'FIN' %}
-                    <div id="detalhe-arquivos-final-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
-                        <p><em>{{ avaliacao.arquivos.name|slice:"-50" }}</em></p>
-                        <div class="arquivo-item">
-                            <span>📄 <strong>{{ avaliacao.nome_arquivo }}</strong><br>{{ avaliacao.extensao_arquivo }} - {{ avaliacao.arquivos.size|filesizeformat }}</span>
-                            <div class="arquivo-botoes">
-                                <a href="{{ avaliacao.arquivos.url }}" class="btn" target="_blank">Visualizar</a>
-                                <a href="{{ avaliacao.arquivos.url }}" class="btn" download>Baixar ⬇️</a>
+                {% if avaliacao.arquivos_enviados and avaliacao.status == 'FIN' %}
+                    {% for arquivo in avaliacao.arquivos_enviados.all %}
+                        <div id="detalhe-arquivos-final-{{ arquivo.id }}" class="arquivo-grupo" style="display: none;">
+                            <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
+                            <div class="arquivo-item">
+                                <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
+                                <div class="arquivo-botoes">
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 {% endif %}
             {% endfor %}
             <button class="btn" onclick="voltarParaPrincipal(2)">Voltar</button>

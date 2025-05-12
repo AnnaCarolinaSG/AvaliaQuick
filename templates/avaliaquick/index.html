@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
 
+{% load static %}
+
 {% block title %} Página Inicial {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
@@ -22,7 +24,7 @@
 {% block content %}
 
     <div class="container" style="width: 100vw; height: 100vh; padding: 20px; box-sizing: border-box;">
-        <div class="main-container" style="display: flex; width: 100%; height: 100%;">
+        <div class="main-container" style="display: flex; width: 100%; height: auto; justify-content: center; align-items: center;">
             <div class="chart-container" style="width: 100%; height: 100%; padding: 10px;">
                 {% if periodos %}
                     <div class="card meu-botao" style="height: 30%; justify-content: center; align-items: center;" onclick="window.location.href='{% url 'avaliacao' %}'">
@@ -43,9 +45,8 @@
                     <p>Ver lista de pesquisadores</p>
                 </div>
             </div>
-            <div class="chart-container" style="width: 100%; height: 100%; padding: 10px;">
-                <h3>Gráfico de Avaliação</h3>
-                <canvas id="myChart" style="height: 30%; width: 50%"></canvas>
+            <div class="chart-container" style="display: flex; width: 100%; height: 100%; padding: 35px; background-color: #0b3251; border-radius: 8px; justify-content: center; align-items: center;">
+                <img src="{% static 'assets/img/logo.png' %}" alt="Logo">
             </div>
         </div>
     </div>
