@@ -154,12 +154,20 @@ class Formulario_C(models.Model):
     total_C = models.FloatField(null=True, blank=False, default=0)
 
     def calcular_media_C(self):
-        total_C1 = (self.atuacao_editor + self.clareza_coesao) / 2 * 0.15
-        total_C2 = self.gestor_contratos * 0.05
-        total_C3 = 0
-        total_C3_A = 0
-        total_C3_B = 0
-        total_C3_C = 0
+        total_C1 = 0
+        if self.atuacao_editor >= 4 :
+            total_C1 += 4
+        else :
+            total_C1 += self.atuacao_editor
+
+        total_C1 = (total_C1 + self.clareza_coesao) / 2
+
+        total_C2 = self.gestor_contratos
+
+        total_C3 = 0 #80% de C
+        total_C3_A = 0 #40% - 50
+        total_C3_B = 0 #20% - 25
+        total_C3_C = 0 #20%  -25
 
         total_C3_A = (
             self.lideranca_projeto * 4 +
@@ -171,6 +179,7 @@ class Formulario_C(models.Model):
         )
 
         total_C3_A += self.valor_recursos_financeiros_comprovados
+
 
         if total_C3_A >= 13 :
             total_C3 += 4 * 0.5
@@ -197,7 +206,7 @@ class Formulario_C(models.Model):
             total_C3 += 3 * 0.25
         elif total_C3_B == 3 or total_C3_B == 2 :
             total_C3 += 2 * 0.25
-        elif total_C3_B <= 1 :
+        elif total_C3_B == 1 :
             total_C3 += 1 * 0.25
         else:
             total_C3 += 0
@@ -223,7 +232,8 @@ class Formulario_C(models.Model):
         else:
             total_C3 += 0
 
-        total = total_C1 + total_C2 + (total_C3 * 0.8)
+
+        total = total_C1 * 0.15 + total_C2 * 0.05 + total_C3 * 0.8
         total = round(total, 3)
 
         return total
