@@ -17,7 +17,7 @@
             <div class="input-group no-border position-relative" id="search-container">
               <input type="text" id="search-input" class="form-control" placeholder="Pesquisar...">
               <div id="search-results" class="dropdown-menu" style="width: auto; max-height: 300px; overflow-y: auto;"></div>
-              <button type="button" class="btn btn-white btn-round btn-just-icon">
+              <button type="button" class="btn btn-white btn-round btn-just-icon" style="cursor: default;">
                 <i class="material-icons">search</i>
               </button>
             </div>
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = "/avaliacao?aba=finalizadas";
             break;
           case 'media':
-            window.location.href = "/avaliacao?aba=finalizadas";
+            window.location.href = "/avaliacao";
             break;
           default:
             // Redirecionamento genérico ou nenhum
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       option.onclick = function(e) {
                           window.location.href = "/avaliacao?aba=finalizadas";
                         };
-                  } else if(item.status === "PEN" && item.arquivo){
+                  } else if(item.status === "PEN" && item.arquivos){
                       option.onclick = function(e) {
                           window.location.href = "/avaliacao?aba=prontos";
                         };

@@ -36,20 +36,17 @@ def notificacoes_contexto(request):
         media_antiga = request.session.get('media_ultima_vista')
 
         if media_atual is not None:
-            if media_antiga is None or round(media_atual, 1) != round(media_antiga, 1):
+            if media_antiga is None or media_atual != media_antiga:
                 notificacoes.append({
-                    'texto': f"A média atual mudou para {round(media_atual, 1)}",
+                    'texto': f"A média atual mudou para {round(media_atual, 3)}",
                     'tipo': 'media',
-                    'media_valor': round(media_atual, 1)
+                    'media_valor': round(media_atual, 3)
                 })
-
-        if not avaliacao_atual:
-            notificacoes.append({'texto': "Nenhuma avaliação aberta no momento", 'tipo': 'info'})
-            aux = 1
     else:
-        notificacoes.append("Nenhuma avaliação aberta no momento")
+        notificacoes.append({'texto': "Nenhuma avaliação aberta no momento", 'tipo': 'info'})
         aux = 1
 
+    print(len(notificacoes))
     return {
         'notificacoes': notificacoes,
         'qtd_notificacoes': len(notificacoes) - aux,
