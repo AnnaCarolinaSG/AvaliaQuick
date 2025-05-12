@@ -483,21 +483,22 @@
         <div id="detalhe-arquivos-final" style="display: none;">
             <h3><em id="nome-pesquisador"></em></h3>
 
+
             {% for avaliacao in avaliacoes %}
-                {% if avaliacao.arquivos_enviados and avaliacao.status == 'FIN' %}
-                    {% for arquivo in avaliacao.arquivos_enviados.all %}
-                        <div id="detalhe-arquivos-final-{{ arquivo.id }}" class="arquivo-grupo" style="display: none;">
-                            <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
-                            <div class="arquivo-item">
-                                <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
-                                <div class="arquivo-botoes">
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                <div id="detalhe-arquivos-final-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
+                    {% if avaliacao.arquivos_enviados and avaliacao.status == 'FIN' %}
+                        {% for arquivo in avaliacao.arquivos_enviados.all %}
+                                <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
+                                <div class="arquivo-item">
+                                    <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
+                                    <div class="arquivo-botoes">
+                                        <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
+                                        <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
             {% endfor %}
             <button class="btn" onclick="voltarParaPrincipal(2)">Voltar</button>
         </div>

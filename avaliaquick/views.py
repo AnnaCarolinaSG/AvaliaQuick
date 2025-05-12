@@ -257,17 +257,18 @@ def apresentar_anteriores(request, id):
 
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=id).count()
     pesquisadores = Pesquisador.objects.filter(ativo=True)
-    avaliacoes = Pendentes.objects.filter(avaliacaoAnual=id, status='FIN')
+    finalizados_avs = Pendentes.objects.filter(avaliacaoAnual=id, status='FIN')
     vazios = Pendentes.objects.filter(Q(arquivos_enviados__isnull=True) & Q(avaliacaoAnual=id)).distinct().count()
     avaliacao = AvaliacaoAnual.objects.get(id=id)
 
     return render(request, 'avaliaquick/avaliacao.html', {
         'pesquisadores': pesquisadores,
-        'avaliacoes': avaliacoes,
+        'finalizados_avs': finalizados_avs,
         'finalizados': finalizados,
         'vazios': vazios,
         'periodoAtual': avaliacao,
         'anteriores': True,
+        'avaliacoes': finalizados_avs,
     })
 
 def enviar_arquivos_view(request, pendente_id, token):
