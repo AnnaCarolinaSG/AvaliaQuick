@@ -79,23 +79,42 @@ def reabrir_avaliacao(request):
 
 
 def adicionar_arquivos(request):
-    if request.method == "POST" and request.FILES.get('arquivos'):
-        arquivo = request.FILES['arquivos']
+    if request.method == "POST" and request.FILES.getlist('arquivos'):
+        avaliacao_id = request.POST.get('avaliacao_id')
 
-        # Se você tiver um campo de relacionamento, pode adicionar o arquivo a ele
-        # Aqui estou supondo que você queira associar o arquivo à avaliação específica:
-        avaliacao_id = request.POST.get('avaliacao_id')  # Você precisa garantir que o id seja passado no formulário
-        avaliacao = Pendentes.objects.get(id=avaliacao_id)
+        try:
+            avaliacao = Pendentes.objects.get(id=avaliacao_id)
+        except Pendentes.DoesNotExist:
+            messages.error(request, "Avaliação não encontrada.")
+            return redirect('avaliacao')
 
-        # Salva o arquivo
-        avaliacao.arquivos = arquivo
-        avaliacao.save()
+        arquivos = request.FILES.getlist('arquivos')
+        for arquivo in arquivos:
+            Arquivo.objects.create(pendente=avaliacao, arquivo=arquivo)
 
-        messages.success(request, "Arquivo adicionado com sucesso!")
-        return redirect('avaliacao')  # Redirecionar para a página de avaliação ou onde for adequado
-    else:
-        messages.error(request, "Erro ao adicionar arquivo.")
+        messages.success(request, "Arquivo(s) adicionados com sucesso!")
         return redirect('avaliacao')
+
+    messages.error(request, "Erro ao adicionar arquivo.")
+    return redirect('avaliacao')
+
+    # if request.method == "POST" and request.FILES.get('arquivos'):
+    #     arquivo = request.FILES['arquivos']
+    #
+    #     # Se você tiver um campo de relacionamento, pode adicionar o arquivo a ele
+    #     # Aqui estou supondo que você queira associar o arquivo à avaliação específica:
+    #     avaliacao_id = request.POST.get('avaliacao_id')  # Você precisa garantir que o id seja passado no formulário
+    #     avaliacao = Pendentes.objects.get(id=avaliacao_id)
+    #
+    #     # Salva o arquivo
+    #     avaliacao.arquivos = arquivo
+    #     avaliacao.save()
+    #
+    #     messages.success(request, "Arquivo adicionado com sucesso!")
+    #     return redirect('avaliacao')  # Redirecionar para a página de avaliação ou onde for adequado
+    # else:
+    #     messages.error(request, "Erro ao adicionar arquivo.")
+    #     return redirect('avaliacao')
 
 def avaliar_pesquisador(request, id):
     if not request.user.is_authenticated:
