@@ -1,14 +1,18 @@
+import os
+
 from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+
+from setup import settings
 from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo, CustomUser
 from django.db.models import Q, Avg, Count
 from .forms import FormularioPesquisador, EnvioArquivosForm
 from datetime import datetime
 from django.core.mail import send_mail
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate
 import random
 
@@ -77,6 +81,15 @@ def reabrir_avaliacao(request):
         messages.success(request, 'O período anterior foi reaberto!')
     return redirect('avaliacao')
 
+def arquivos_prontos(request, id):
+    if request.method == 'POST':
+        avaliacao = Pendentes.objects.get(id=id)
+
+        avaliacao.arquivos_prontos = True
+        avaliacao.save()
+        messages.success(request, 'Pesquisador movido para a próxima etapa!')
+    return redirect('avaliacao')
+
 
 def adicionar_arquivos(request):
     if request.method == "POST" and request.FILES.getlist('arquivos'):
@@ -122,6 +135,12 @@ def avaliar_pesquisador(request, id):
 
     return redirect('criarFormularioA', id)
 
+def visualizar_avaliacao(request, id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+
+    return redirect('visualizarFormularioA', id)
+
 def solicitar_novamente(request, avaliacao_id):
     if request.method == 'POST':
         avaliacao = get_object_or_404(Pendentes, id=avaliacao_id)
@@ -157,15 +176,15 @@ def avaliacao(request):
         periodoAtual = AvaliacaoAnual.objects.filter(status='ABE').order_by('-data_inicio').first()
     else:
         periodoAtual = AvaliacaoAnual.objects.order_by('-data_inicio').first()
-    pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=False)).distinct().count()
-    prontos_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=False)).distinct()
-    pendentes_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_enviados__isnull=True)).distinct()
+    pendentes = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_prontos=True)).distinct().count()
+    prontos_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_prontos=True)).distinct()
+    pendentes_avs = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(status='PEN') & Q(arquivos_prontos=False)).distinct()
     finalizados_avs = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual)
     andamento = Pendentes.objects.filter(status='AND', avaliacaoAnual=periodoAtual).count()
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=periodoAtual).count()
     pesquisadores = Pesquisador.objects.filter(ativo=True)
     avaliacoes = Pendentes.objects.filter(avaliacaoAnual=periodoAtual)
-    vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos_enviados__isnull=True)).distinct().count()
+    vazios = Pendentes.objects.filter(Q(avaliacaoAnual=periodoAtual) & Q(arquivos_prontos=False)).distinct().count()
     if periodoAtual:
         media = periodoAtual.media_nota
     else:
@@ -258,7 +277,7 @@ def apresentar_anteriores(request, id):
     finalizados = Pendentes.objects.filter(status='FIN', avaliacaoAnual=id).count()
     pesquisadores = Pesquisador.objects.filter(ativo=True)
     finalizados_avs = Pendentes.objects.filter(avaliacaoAnual=id, status='FIN')
-    vazios = Pendentes.objects.filter(Q(arquivos_enviados__isnull=True) & Q(avaliacaoAnual=id)).distinct().count()
+    vazios = Pendentes.objects.filter(Q(arquivos_prontos=False) & Q(avaliacaoAnual=id)).distinct().count()
     avaliacao = AvaliacaoAnual.objects.get(id=id)
 
     return render(request, 'avaliaquick/avaliacao.html', {
@@ -274,22 +293,23 @@ def apresentar_anteriores(request, id):
 def enviar_arquivos_view(request, pendente_id, token):
     # Busca o registro da pendência
     pendente = get_object_or_404(Pendentes, id=pendente_id)
+    pesquisador = pendente.pesquisador
 
-    # Validação do token
-    #if str(pendente.token) != str(token):
-        #return HttpResponseForbidden("Token inválido. Acesso não autorizado.")
+    #Validação do token
+    if str(pesquisador.token) != str(token):
+        return HttpResponseForbidden("Token inválido. Acesso não autorizado.")
 
     if request.method == 'POST':
         form = EnvioArquivosForm(request.POST, request.FILES)
         if form.is_valid():
             arquivos = request.FILES.getlist('arquivos')
-
+            print(arquivos)
             # Salva os arquivos no modelo Arquivo
             for arquivo in arquivos:
-                Arquivo.objects.create(pendente=pendente.id, arquivo=arquivo)
+                Arquivo.objects.create(pendente=pendente, arquivo=arquivo)
 
             # Atualiza o status da pendência
-            pendente.status = 'PEN'  # ou 'FIN' se quiser marcar como finalizado já
+            pendente.status = 'PEN'
             pendente.save()
 
             # Redireciona para página de sucesso
@@ -305,6 +325,20 @@ def enviar_arquivos_view(request, pendente_id, token):
         'pesquisador': pendente.pesquisador,
         'avaliacao': pendente.avaliacaoAnual,
     })
+
+def remover_arquivo(request, arquivo_id):
+    if request.method == 'POST':
+        arquivo = get_object_or_404(Arquivo, id=arquivo_id)
+
+        # Apagar o arquivo do sistema de arquivos (media folder)
+        caminho_arquivo = os.path.join(settings.MEDIA_ROOT, arquivo.arquivo.name)
+        if os.path.exists(caminho_arquivo):
+            os.remove(caminho_arquivo)
+
+        # Apagar do banco de dados
+        arquivo.delete()
+        messages.success(request, "Arquivo removido com sucesso.")
+    return redirect('avaliacao')
 
 def sucesso_view(request):
     return render(request, 'avaliaquick/sucesso.html')

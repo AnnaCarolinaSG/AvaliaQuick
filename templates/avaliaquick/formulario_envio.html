@@ -240,7 +240,7 @@
   {{ form.as_p }}
 
   <label for="arquivo-input">Escolha seus arquivos:</label><br>
-  <input type="file" id="arquivo-input" multiple required>
+  <input type="file" id="arquivo-input" name="arquivos" multiple required>
 
   <!-- Tabela dos arquivos -->
   <table id="tabela-arquivos" style="width:100%; margin-top:15px; border-collapse: collapse; display: none;">
@@ -253,7 +253,6 @@
     </thead>
     <tbody></tbody>
   </table>
-
   <button type="submit" style="margin-top:15px;">Enviar</button>
 </form>
 
@@ -344,40 +343,7 @@
     tabela.style.display = arquivosSelecionados.length > 0 ? 'table' : 'none';
   });
 
-  formulario.addEventListener('submit', (event) => {
-    event.preventDefault(); // Previne o envio padrão do formulário
 
-    const formData = new FormData();
-
-    // Adiciona os arquivos acumulados ao FormData
-    arquivosSelecionados.forEach(file => formData.append('arquivos', file));
-
-    // Adiciona os arquivos do campo input (em caso de novo arquivo escolhido)
-    const inputArquivos = document.getElementById('arquivo-input');
-    Array.from(inputArquivos.files).forEach(file => formData.append('arquivos', file));
-
-    // Adiciona o CSRF token ao FormData (necessário para o Django)
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name="csrfmiddlewaretoken"]').value);
-
-    // Enviar os dados via AJAX
-    fetch(formulario.action, {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json()) // Resposta em JSON
-    .then(data => {
-      alert('Arquivos enviados com sucesso!');
-
-      // Limpar lista de arquivos
-      arquivosSelecionados = [];
-      corpoTabela.innerHTML = '';
-      tabela.style.display = 'none';
-    })
-    .catch(error => {
-      alert('Erro ao enviar os arquivos.');
-      console.error(error);
-    });
-  });
 </script>
 
 

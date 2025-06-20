@@ -50,23 +50,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const ctx = document.getElementById('myChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Item 1', 'Item 2', 'Item 3'],
-                datasets: [
-                    { label: 'Série 1', data: [3, 7, 15], backgroundColor: 'grey' },
-                    { label: 'Série 2', data: [6, 13, 18], backgroundColor: 'black' }
-                ]
-            },
-            options: { responsive: true }
-        });
-    </script>
-
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->

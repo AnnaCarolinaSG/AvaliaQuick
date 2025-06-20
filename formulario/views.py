@@ -55,6 +55,21 @@ def editarFormularioA(request, id):
         print(form.errors)
     return  render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
 
+def visualizarFormularioA(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = get_object_or_404(Formulario_A, avaliacao=avaliacao)
+
+    if request.method == 'POST':
+        return redirect('visualizarFormularioB', id)
+
+    form = FormularioAForm(instance=formulario_existente)
+
+    # Desabilita todos os campos
+    for field in form.fields.values():
+        field.disabled = True
+
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
+
 #--FORMS B--
 def criarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
@@ -105,6 +120,7 @@ def criarFormularioB(request, id):
 def editarFormularioB(request, id):
     obj = get_object_or_404(Formulario_B, id=id)
     form = FormularioBForm(request.POST or None, instance=obj)
+
     if form.is_valid():
         form.save()
         return redirect('/formB.html')
@@ -112,6 +128,20 @@ def editarFormularioB(request, id):
         print(form.errors)
     return  render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
 
+def visualizarFormularioB(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = get_object_or_404(Formulario_B, avaliacao=avaliacao)
+
+    if request.method == 'POST':
+        return redirect('visualizarFormularioC', id)
+
+    form = FormularioBForm(instance=formulario_existente)
+
+    # Desabilita todos os campos
+    for field in form.fields.values():
+        field.disabled = True
+
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
 
 #--FORMS C--
 def criarFormularioC(request, id):
@@ -195,5 +225,18 @@ def editarFormularioC(request, id):
         print(form.errors)
     return  render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
 
+def visualizarFormularioC(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = get_object_or_404(Formulario_C, avaliacao=avaliacao)
 
+    if request.method == 'POST':
+        return redirect('avaliacao')
+
+    form = FormularioCForm(instance=formulario_existente)
+
+    # Desabilita todos os campos
+    for field in form.fields.values():
+        field.disabled = True
+
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
 # Create your views here.

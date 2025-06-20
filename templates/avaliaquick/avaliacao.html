@@ -367,6 +367,8 @@
                                     <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
                                 </div>
                             </div>
+                        {% empty %}
+                            <p>Nenhum arquivo adicionado.</p>
                         {% endfor %}
                     {% endif %}
                 </div>
@@ -388,6 +390,11 @@
                         <div class="avaliacao-botoes">
                             <button class="btn avaliar" onclick="addArquivos({{ avaliacao.id }})">Adicionar Arquivos</button>
                             <button class="btn avaliar" onclick="solicitarNovamente(this, {{ avaliacao.id }})" data-solicitado="false">Enviar E-mail</button>
+                            <form method="POST" action="{% url 'arquivos_prontos_url' avaliacao.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn avaliar" style="background-color: green">Próxima Fase</button>
+                            </form>
+                            <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }}, 3)">Ver arquivos</button>
                         </div>
                         <form method="POST" action="{% url 'deletar_avaliacao' avaliacao.id %}"
                               onsubmit="return confirm('Tem certeza que deseja excluir esta avaliação?');">
@@ -401,6 +408,37 @@
             {% empty %}
                 <p>Nenhuma avaliação pendente disponível no momento.</p>
             {% endfor %}
+        </div>
+
+        <div id="detalhe-arquivos-pendentes" style="display: none;">
+            <h3><em id="nome-pesquisador"></em></h3>
+            {% for avaliacao in pendentes_avs %}
+                <div id="detalhe-arquivos-pendentes-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
+                    {% if avaliacao.arquivos_enviados %}
+                        {% for arquivo in avaliacao.arquivos_enviados.all %}
+                            <p style="font-weight: bold; font-size: 20px"><em>Arquivo {{ forloop.counter }}</em></p>
+                            <div class="arquivo-item">
+                                <span>
+                                    📄 <strong>{{ arquivo.nome_arquivo }}</strong><br>
+                                    {{ arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}
+                                </span>
+                                <div class="arquivo-botoes">
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                    <form method="POST" action="{% url 'remover_arquivo' arquivo.id %}" style="display:inline;"
+                                    onsubmit="return confirm('Tem certeza que deseja excluir este arquivo?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Remover</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>Nenhum arquivo adicionado.</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button class="btn" onclick="voltarParaPrincipal(3)">Voltar</button>
         </div>
 
         <div id="formulario-upload" style="display:none;">
@@ -465,7 +503,8 @@
                                     data-email="{{ avaliacao.pesquisador.email }}"
                                     data-nota="{{ avaliacao.nota }}"
                                     data-status="{{ avaliacao.status }}"
-                                    data-data="{{ avaliacao.data_hora|date:'d/m/Y H:i' }}">
+                                    data-data="{{ avaliacao.data_hora|date:'d/m/Y H:i' }}"
+                                    data-avaliacao="{{ avaliacao.id }}">
                                 Ver Mais
                             </button>
                             {% if anteriores %}<button class="btn" onclick="mostrarArquivos({{ avaliacao.id }}, 2)">Ver arquivos</button>{% endif %}
@@ -508,9 +547,9 @@
             <p><strong>Nota:</strong> <span id="modal-nota"></span></p>
             <p><strong>Status:</strong> <span id="modal-status"></span></p>
             <p><strong>Data:</strong> <span id="modal-data"></span></p>
-             <form method="POST" style="display:inline;">
-                 {% csrf_token %}
-                 <button type="submit" class="btn avaliar">Acessar formulário</button>
+             <form id="formularioVisualizacao" method="GET" action="" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn avaliar">Acessar Formulário</button>
              </form>
           </div>
         </div>
@@ -566,6 +605,7 @@
         // Exibe a div específica para a avaliação clicada
         const detalheEspecifico = document.getElementById('detalhe-arquivos-' + id);
         const detalheEspecificoFinal = document.getElementById('detalhe-arquivos-final-' + id);
+        const detalheEspecificoPendentes = document.getElementById('detalhe-arquivos-pendentes-' + id);
 
         if (detalheEspecifico) {
             detalheEspecifico.style.display = 'block';
@@ -573,14 +613,20 @@
         if (detalheEspecificoFinal) {
             detalheEspecificoFinal.style.display = 'block'
         }
+        if (detalheEspecificoPendentes) {
+            detalheEspecificoPendentes.style.display = "block"
+        }
 
         // Exibe a seção de detalhes
         if(botao === 1) {
             document.getElementById('detalhe-arquivos').style.display = 'block';
             document.getElementById('lista-avaliacoes').style.display = 'none';
-        } else {
+        } else if(botao === 2){
             document.getElementById('detalhe-arquivos-final').style.display = 'block';
             document.getElementById('lista-final').style.display = 'none';
+        } else {
+            document.getElementById('detalhe-arquivos-pendentes').style.display = 'block';
+            document.getElementById('lista-pendentes').style.display = 'none';
         }
     }
 
@@ -588,9 +634,12 @@
         if(botao === 1) {
             document.getElementById('detalhe-arquivos').style.display = 'none';
             document.getElementById('lista-avaliacoes').style.display = 'block';
-        } else {
+        } else if(botao === 2){
             document.getElementById('detalhe-arquivos-final').style.display = 'none';
             document.getElementById('lista-final').style.display = 'block';
+        } else {
+            document.getElementById('detalhe-arquivos-pendentes').style.display = 'none';
+            document.getElementById('lista-pendentes').style.display = 'block';
         }
     }
 
@@ -633,6 +682,9 @@
         document.getElementById('modal-nota').textContent = btn.dataset.nota;
         document.getElementById('modal-status').textContent = btn.dataset.status;
         document.getElementById('modal-data').textContent = btn.dataset.data;
+
+        const form = document.getElementById('formularioVisualizacao');
+        form.action = `/formA/${btn.dataset.avaliacao}/visualizar/`;
         document.getElementById('modalAvaliacao').style.display = 'block';
     }
 

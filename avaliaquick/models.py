@@ -1,3 +1,5 @@
+from email.policy import default
+
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -41,6 +43,7 @@ class Pendentes(models.Model):
     ]
     status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='PEN')
     nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
+    arquivos_prontos = models.BooleanField(default=False)
 
 
 
