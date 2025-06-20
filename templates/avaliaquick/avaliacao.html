@@ -429,14 +429,10 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
-                            <button class="btn avaliar"
-                                onclick="editarPesquisador(this)"
-                                data-id="{{ pesquisador.id }}"
-                                data-nome="{{ pesquisador.nome }}"
-                                data-matricula="{{ pesquisador.matricula }}"
-                                data-email="{{ pesquisador.email }}">
-                                Editar
-                            </button>
+                            <form method="POST" action="{% url 'avaliar_pesquisador' avaliacao.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn avaliar">Editar</button>
+                            </form>
                         </div>
                         <div class="avaliacao-status">
                             <H4>FINALIZADO</H4>

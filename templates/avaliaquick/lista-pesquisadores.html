@@ -297,9 +297,11 @@
                                 data-id="{{ pesquisador.id }}"
                                 data-nome="{{ pesquisador.nome }}"
                                 data-matricula="{{ pesquisador.matricula }}"
-                                data-email="{{ pesquisador.email }}">
+                                data-email="{{ pesquisador.email }}"
+                                data-matricula-original="{{ pesquisador.matricula }}">
                             Editar
                         </button>
+                        <input type="hidden" id="pesq-matricula-original-{{ pesquisador.id }}" value="{{ pesquisador.matricula }}">
                         <button type="button" class="btn btn-danger"
                                 data-toggle="modal"
                                 data-target="#confirmModal"

@@ -8,9 +8,15 @@ from avaliaquick.models import Pendentes
 
 #--FORMS A--
 def criarFormularioA(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = Formulario_A.objects.filter(avaliacao=avaliacao).first()
+
     if request.method == 'POST':
-        form = FormularioAForm(request.POST)
-        avaliacao = get_object_or_404(Pendentes, id=id)
+        if formulario_existente:
+            form = FormularioAForm(request.POST, instance=formulario_existente)
+        else:
+            form = FormularioAForm(request.POST)
+
         if form.is_valid():
             formulario = form.save(commit=False)
             updated = Formulario_A.objects.filter(avaliacao=avaliacao).update(
@@ -33,7 +39,10 @@ def criarFormularioA(request, id):
         else:
             print(form.errors)
     else:
-        form = FormularioAForm()
+        if formulario_existente:
+            form = FormularioAForm(instance=formulario_existente)
+        else:
+            form = FormularioAForm()
     return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
 
 def editarFormularioA(request, id):
@@ -48,9 +57,15 @@ def editarFormularioA(request, id):
 
 #--FORMS B--
 def criarFormularioB(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = Formulario_B.objects.filter(avaliacao=avaliacao).first()
+
     if request.method == 'POST':
-        form = FormularioBForm(request.POST)
-        avaliacao = get_object_or_404(Pendentes, id=id)
+        if formulario_existente:
+            form = FormularioBForm(request.POST, instance=formulario_existente)
+        else:
+            form = FormularioBForm(request.POST)
+
         if form.is_valid():
             formulario = form.save(commit=False)
             updated = Formulario_B.objects.filter(avaliacao=avaliacao).update(
@@ -81,7 +96,10 @@ def criarFormularioB(request, id):
         else:
             print(form.errors)
     else:
-        form = FormularioBForm()
+        if formulario_existente:
+            form = FormularioBForm(instance=formulario_existente)
+        else:
+            form = FormularioBForm()
     return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
 
 def editarFormularioB(request, id):
@@ -97,9 +115,14 @@ def editarFormularioB(request, id):
 
 #--FORMS C--
 def criarFormularioC(request, id):
+    avaliacao = get_object_or_404(Pendentes, id=id)
+    formulario_existente = Formulario_C.objects.filter(avaliacao=avaliacao).first()
+
     if request.method == 'POST':
-        form = FormularioCForm(request.POST)
-        avaliacao = get_object_or_404(Pendentes, id=id)
+        if formulario_existente:
+            form = FormularioCForm(request.POST, instance=formulario_existente)
+        else:
+            form = FormularioCForm(request.POST)
         if form.is_valid():
             formulario = form.save(commit=False)
             updated = Formulario_C.objects.filter(avaliacao=avaliacao).update(
@@ -156,7 +179,10 @@ def criarFormularioC(request, id):
         else:
             print(form.errors)
     else:
-        form = FormularioCForm()
+        if formulario_existente:
+            form = FormularioCForm(instance=formulario_existente)
+        else:
+            form = FormularioCForm()
     return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
 
 def editarFormularioC(request, id):
