@@ -292,7 +292,9 @@
 
     <div id="info" class="tab-content active">
         {% if periodoAtual %}
-            <h3>PERÍODO: {{ periodoAtual.data_inicio|date:"d/m/Y" }} - {% if periodoAtual.data_fim %}{{ periodoAtual.data_fim }}</h3>
+            <div style="display: flex; flex-direction: row; gap: 10px; width: 100%; justify-content: space-between;">
+                <div style="display: flex; flex-direction: row; gap: 10px;">
+                    <h3><strong>PERÍODO: {{ periodoAtual.data_inicio|date:"d/m/Y" }} - {% if periodoAtual.data_fim %}{{ periodoAtual.data_fim }}</strong></h3>
                 {% if not anteriores %}
                     <form method="post" action="{% url 'reabrir_avaliacao' %}" style="display:inline;">
                         {% csrf_token %}
@@ -301,31 +303,49 @@
                             Reabrir
                         </button>
                     </form>
+                </div>
+            </div>
                 {% endif %}
-            {% else %}Atual</h3>
-                {% if not anteriores %}
-                    <form method="post" action="{% url 'fechar_avaliacao' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
-                        <button type="submit" class="btn">
-                            Fechar
-                        </button>
-                    </form>
-
-                    <a href="{% url 'avaliacao_adicionar' %}" class="btn btn-success">Adicionar Pesquisadores</a>
-                    <a href="{% url 'avaliacao_remover' %}" class="btn btn-danger">Remover Pesquisadores</a>
+                {% else %}Atual</h3>
+                    {% if not anteriores %}
+                        <form method="post" action="{% url 'fechar_avaliacao' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="avaliacao_id" value="{{ periodoAtual.id }}">
+                            <button type="submit" class="btn">
+                                Fechar
+                            </button>
+                        </form>
+                    </div>
+                    <div style="display: flex; flex-direction: column; right: 0;" class="float-right">
+                        <a href="{% url 'avaliacao_adicionar' %}" class="btn btn-success" style="text-decoration: none">Adicionar Pesquisadores</a>
+                        <a href="{% url 'avaliacao_remover' %}" class="btn btn-danger" style="text-decoration: none">Remover Pesquisadores</a>
+                    </div>
+                </div>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-
 
             {% if not anteriores %}
-                <p><strong>PRONTOS PARA AVALIAÇÃO:</strong> {{ pendentes }}</p>
-                <p><strong>ENVIOS PENDENTES:</strong> {{ vazios }}</p>
-                <p><strong>AVALIAÇÕES EM ESPERA:</strong> {{ pendentes }}</p>
-                <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
+                <div style="gap: 20px; display: flex; flex-direction: row; max-width: 440px; max-height: 300px; margin-bottom: 20px;">
+                    <div style="background-color: #d9d9d9; border-radius: 10px; padding: 10px; max-width: 160px; border: 1px solid #000">
+                        <p style="text-align: center"><strong>ENVIOS PENDENTES: {{ vazios }}</strong></p>
+                    </div>
+                    <div style="background-color: #d9d9d9; border-radius: 10px; padding: 10px; max-width: 160px; border: 1px solid #000">
+                        <p style="text-align: center"><strong>PRONTOS PARA AVALIAÇÃO: {{ pendentes }}</strong></p>
+                    </div>
+                </div>
+            {% else %}
+                </div>
+            </div>
             {% endif %}
-            <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
-            <p><strong>MÉDIA FINAL:</strong> {{ periodoAtual.media_nota|default_if_none:0|floatformat:3 }}</p>
+
+            <div style="gap: 20px; display: flex; flex-direction: row; max-width: 440px; max-height: 300px">
+                <div style="background-color: #d9d9d9; border-radius: 10px; padding: 10px; max-width: 160px; border: 1px solid #000">
+                    <p style="text-align: center"><strong>PESQUISADORES AVALIADOS: {{ finalizados }}</strong></p>
+                </div>
+                <div style="background-color: #4c317e; border-radius: 10px; padding: 10px; max-width: 160px; border: 1px solid #000">
+                    <p style="color: #FFFFFF; text-align: center"><strong>MÉDIA FINAL: {{ periodoAtual.media_nota|default_if_none:0|floatformat:3 }}</strong></p>
+                </div>
+            </div>
         {% else %}
             <p>Nenhum período foi iniciado ainda.</p>
         {% endif %}
@@ -347,9 +367,9 @@
                             <span>{{ avaliacao.pesquisador.email }}</span>
                         </div>
                         <div class="avaliacao-botoes">
-                            <form method="POST" action="{% url 'avaliar_pesquisador' avaliacao.id %}" style="display:inline;">
+                            <form method="POST" action="{% url 'avaliar_pesquisador' avaliacao.id %}" style="margin-bottom: 0px;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn avaliar">Avaliar</button>
+                                <button type="submit" class="btn avaliar" style="width: 100%;">Avaliar</button>
                             </form>
                             <button class="btn" onclick="mostrarArquivos({{ avaliacao.id }}, 1)">Ver arquivos</button>
                         </div>
@@ -375,12 +395,15 @@
                 <div id="detalhe-arquivos-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
                     {% if avaliacao.arquivos_enviados %}
                         {% for arquivo in avaliacao.arquivos_enviados.all %}
-                            <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
+                            <p style="font-weight: bold; font-size: 20px"><em>Arquivo {{ forloop.counter }}</em></p>
                             <div class="arquivo-item">
-                                <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
+                                <span>
+                                    📄 <strong>{{ arquivo.nome_arquivo }}</strong><br>
+                                    {{ arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}
+                                </span>
                                 <div class="arquivo-botoes">
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank" style="color: #FFFFFF; text-decoration: none; background-color: green;">Visualizar</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download style="color: #FFFFFF; text-decoration: none; background-color: green;">Baixar ⬇️</a>
                                 </div>
                             </div>
                         {% empty %}
@@ -406,7 +429,9 @@
                         <div class="avaliacao-botoes">
                             <button class="btn avaliar" onclick="addArquivos({{ avaliacao.id }})">Adicionar Arquivos</button>
                             <button class="btn avaliar" onclick="solicitarNovamente(this, {{ avaliacao.id }})" data-solicitado="false">Enviar E-mail</button>
-                            <form method="POST" action="{% url 'arquivos_prontos_url' avaliacao.id %}" style="display:inline;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-top: 10px;">
+                            <form method="POST" action="{% url 'arquivos_prontos_url' avaliacao.id %}" style="height: auto; margin-bottom: 0px;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn avaliar" style="background-color: green">Próxima Fase</button>
                             </form>
@@ -439,8 +464,8 @@
                                     {{ arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}
                                 </span>
                                 <div class="arquivo-botoes">
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
-                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank" style="color: #FFFFFF; text-decoration: none; background-color: green;">Visualizar</a>
+                                    <a href="{{ arquivo.arquivo.url }}" class="btn" download style="color: #FFFFFF; text-decoration: none; background-color: green;">Baixar ⬇️</a>
                                     <button type="button" class="btn btn-danger"
                                             data-toggle="modal"
                                             data-target="#confirmModal"
@@ -565,12 +590,15 @@
                 <div id="detalhe-arquivos-final-{{ avaliacao.id }}" class="arquivo-grupo" style="display: none;">
                     {% if avaliacao.arquivos_enviados and avaliacao.status == 'FIN' %}
                         {% for arquivo in avaliacao.arquivos_enviados.all %}
-                                <p><em>{{ arquivo.arquivo.name|slice:"-50" }}</em></p>
+                                <p style="font-weight: bold; font-size: 20px"><em>Arquivo {{ forloop.counter }}</em></p>
                                 <div class="arquivo-item">
-                                    <span>📄 <strong>{{ arquivo.arquivo.nome_arquivo }}</strong><br>{{ arquivo.arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}</span>
+                                    <span>
+                                    📄 <strong>{{ arquivo.nome_arquivo }}</strong><br>
+                                    {{ arquivo.extensao_arquivo }} - {{ arquivo.arquivo.size|filesizeformat }}
+                                </span>
                                     <div class="arquivo-botoes">
-                                        <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank">Visualizar</a>
-                                        <a href="{{ arquivo.arquivo.url }}" class="btn" download>Baixar ⬇️</a>
+                                        <a href="{{ arquivo.arquivo.url }}" class="btn" target="_blank" style="color: #FFFFFF; text-decoration: none; background-color: green;">Visualizar</a>
+                                        <a href="{{ arquivo.arquivo.url }}" class="btn" download style="color: #FFFFFF; text-decoration: none; background-color: green;">Baixar ⬇️</a>
                                     </div>
                                 </div>
                         {% endfor %}
