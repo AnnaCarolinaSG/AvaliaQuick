@@ -29,6 +29,9 @@ class FormularioPesquisador(forms.ModelForm):
         if 'ativo' in self.fields:
             del self.fields['ativo']
 
+        if 'usuario' in self.fields:
+            del self.fields['usuario']
+
         for field in self.fields.values():
             if field.widget.attrs.get('class'):
                 field.widget.attrs['class'] += ' '

@@ -11,6 +11,7 @@ def enviar_emails_para_pesquisadores(sender, instance, created, **kwargs):
         print("SINAL DISPARADO: Enviando e-mails")
         for pesquisador in Pesquisador.objects.filter(ativo=True):
             pendente = Pendentes.objects.create(
+                usuario=pesquisador.usuario,
                 pesquisador=pesquisador,
                 avaliacaoAnual=instance,
                 data_hora=timezone.now()
@@ -20,9 +21,10 @@ def enviar_emails_para_pesquisadores(sender, instance, created, **kwargs):
 def atualizar_media(avaliacao):
     media = Pendentes.objects.filter(
         status='FIN',
-        avaliacaoAnual=avaliacao
+        avaliacaoAnual=avaliacao,
+        usuario=avaliacao.usuario
     ).aggregate(media_nota=Avg('nota'))['media_nota'] or 0.0
-    avaliacao.media_nota = round(media, 2)
+    avaliacao.media_nota = round(media, 3)
     avaliacao.save()
 
 @receiver(post_save, sender=Pendentes)

@@ -8,7 +8,6 @@
     body {
         font-family: Arial, sans-serif;
         margin: 0;
-        padding: 40px;
         background-color: #f0f2f5;
     }
 
@@ -326,7 +325,7 @@
                 <p><strong>AVALIAÇÕES EM ANDAMENTO:</strong> {{ andamento }}</p>
             {% endif %}
             <p><strong>PESQUISADORES AVALIADOS:</strong> {{ finalizados }}</p>
-            <p><strong>MÉDIA FINAL:</strong> {{ periodoAtual.media_nota|default_if_none:0 }}</p>
+            <p><strong>MÉDIA FINAL:</strong> {{ periodoAtual.media_nota|default_if_none:0|floatformat:3 }}</p>
         {% else %}
             <p>Nenhum período foi iniciado ainda.</p>
         {% endif %}
@@ -545,7 +544,7 @@
                                     data-nome="{{ avaliacao.pesquisador.nome }}"
                                     data-email="{{ avaliacao.pesquisador.email }}"
                                     data-nota="{{ avaliacao.nota }}"
-                                    data-status="{{ avaliacao.status }}"
+                                    data-status="{{ avaliacao.get_status_display }}"
                                     data-data="{{ avaliacao.data_hora|date:'d/m/Y H:i' }}"
                                     data-avaliacao="{{ avaliacao.id }}">
                                 Ver Mais

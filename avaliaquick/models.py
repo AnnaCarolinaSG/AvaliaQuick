@@ -10,6 +10,7 @@ class CustomUser(AbstractUser):
     matricula = models.CharField(null=False, blank=False, unique=True, max_length=16)
 
 class AvaliacaoAnual(models.Model):
+    usuario = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     data_inicio = models.DateTimeField()
     data_fim = models.DateTimeField(null=True)
     media_nota = models.FloatField(validators=[MinValueValidator(0.0)], null=True)
@@ -21,6 +22,7 @@ class AvaliacaoAnual(models.Model):
     status = models.CharField(max_length=3, choices=OPCOES_STATUS, default='ABE')
 
 class Pesquisador(models.Model):
+    usuario = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     nome = models.CharField(null=False, blank=False, max_length=100)
     matricula = models.CharField(null=False, blank=False, unique=True, max_length=15)
     email = models.EmailField(null=False, blank=False, default='')
@@ -32,6 +34,7 @@ def caminho_arquivo(instance, filename):
     return f"pesquisadores/{instance.pesquisador.nome}/{filename}"
 
 class Pendentes(models.Model):
+    usuario = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     pesquisador = models.ForeignKey(Pesquisador, on_delete=models.CASCADE)
     avaliacaoAnual = models.ForeignKey(AvaliacaoAnual, on_delete=models.CASCADE, default='')
     data_hora = models.DateTimeField(null=False, blank=False)

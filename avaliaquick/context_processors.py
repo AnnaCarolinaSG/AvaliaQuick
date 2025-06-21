@@ -3,17 +3,23 @@ from django.db.models import Avg
 from .models import AvaliacaoAnual, Pendentes
 
 def notificacoes_contexto(request):
+    if not request.user.is_authenticated:
+        return {
+            'notificacoes': [],
+            'qtd_notificacoes': 0,
+        }
+
     hoje = timezone.now().date()
     notificacoes = []
     aux = 0
 
-    avaliacao_atual = AvaliacaoAnual.objects.filter(status='ABE').order_by('-data_inicio').first()
+    avaliacao_atual = AvaliacaoAnual.objects.filter(usuario=request.user, status='ABE').order_by('-data_inicio').first()
 
     if avaliacao_atual:
-        pendentes = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=False).count()
-        prontos_para_avaliar = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=True).distinct().count()
-        em_andamento = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='AND').count()
-        finalizados = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='FIN').count()
+        pendentes = Pendentes.objects.filter(usuario=request.user, avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=False).count()
+        prontos_para_avaliar = Pendentes.objects.filter(usuario=request.user, avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=True).distinct().count()
+        em_andamento = Pendentes.objects.filter(usuario=request.user, avaliacaoAnual=avaliacao_atual, status='AND').count()
+        finalizados = Pendentes.objects.filter(usuario=request.user, avaliacaoAnual=avaliacao_atual, status='FIN').count()
 
         if pendentes:
             notificacoes.append({'texto': f"{pendentes} pendentes", 'tipo': 'pendentes'})
@@ -27,7 +33,7 @@ def notificacoes_contexto(request):
         if finalizados:
             notificacoes.append({'texto': f"{finalizados} avaliações finalizadas", 'tipo': 'finalizadas'})
 
-        media_atual = Pendentes.objects.filter(
+        media_atual = Pendentes.objects.filter(usuario=request.user,
             avaliacaoAnual=avaliacao_atual,
             status='FIN',
             nota__isnull=False
@@ -46,7 +52,6 @@ def notificacoes_contexto(request):
         notificacoes.append({'texto': "Nenhuma avaliação aberta no momento", 'tipo': 'info'})
         aux = 1
 
-    print(len(notificacoes))
     return {
         'notificacoes': notificacoes,
         'qtd_notificacoes': len(notificacoes) - aux,

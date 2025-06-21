@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from django.contrib import messages
@@ -192,6 +193,7 @@ def criarFormularioC(request, id):
             nota_final = total_A * 0.1 + total_B * 0.2 + total_C * 0.7
             pendente.nota = round(nota_final, 3)
             pendente.status = 'FIN'
+            pendente.data_hora = datetime.datetime.now()
             pendente.save()
 
             return redirect('avaliacao')

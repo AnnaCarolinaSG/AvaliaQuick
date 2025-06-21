@@ -8,7 +8,6 @@
     body {
         font-family: Arial, sans-serif;
         margin: 0;
-        padding: 40px;
         background-color: #f0f2f5;
     }
 
@@ -235,7 +234,7 @@
             <div class="avaliacao-card">
                 <div class="avaliacao-data">
                     <strong><em>Avaliação {{ avaliacao.data_inicio|date:"Y"|add:"-1" }}</em></strong><br>
-                    <span>Média de notas: {{ avaliacao.media_nota }}</span>
+                    <span>Média de notas: {{ avaliacao.media_nota|floatformat:3 }}</span>
                 </div>
                 <div class="avaliacao-info">
                     <strong><em>Avaliados:</em></strong><br>
