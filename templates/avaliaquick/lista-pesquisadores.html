@@ -483,7 +483,14 @@
 
     // Verifica se há erro de matrícula exibido
     const erroMatricula = document.getElementById('erroEditar-matricula');
-    const valorMatricula = document.getElementById('pesq-matricula').value;
+    const valorMatricula = document.getElementById('pesq-matricula').value.trim();
+    const valorMatriculaOriginal = document.getElementById(`pesq-matricula-original-${document.getElementById('pesq-id').value}`).value.trim();
+
+    // Se não mudou, envia direto
+    if (valorMatricula === valorMatriculaOriginal) {
+        this.submit();
+        return;
+    }
     const matriculaInput = document.querySelector('input[id="pesq-matricula"]');
     const formGroup = matriculaInput.closest('.form-group');
 

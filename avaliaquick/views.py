@@ -357,7 +357,7 @@ def busca_global(request):
                 'id': p.id,
             })
 
-        avaliacoes = AvaliacaoAnual.objects.filter(status__icontains=termo)[:]
+        avaliacoes = AvaliacaoAnual.objects.filter(data_inicio__icontains=termo)[:]
         for a in avaliacoes:
             resultados.append({
                 'label': f"Avaliação de {a.data_inicio.strftime('%d/%m/%Y')}",
@@ -367,15 +367,18 @@ def busca_global(request):
                 'status': a.status,
             })
 
-        pendentes = Pendentes.objects.filter(status__icontains=termo)[:]
+        pendentes = Pendentes.objects.filter(
+            Q(status__icontains=termo) |
+            Q(pesquisador__nome__icontains=termo)
+        )[:]
         for p in pendentes:
             resultados.append({
-                'label': f"Avaliação: {p.pesquisador.nome}",
+                'label': f"Avaliação: {p.pesquisador.nome} - {p.data_hora.strftime('%d/%m/%Y')}",
                 'tipo': 'Avaliação',
                 'url': reverse('detalhes_pendente', args=[p.id]),
                 'id': p.id,
                 'status': p.status,
-                'arquivos': bool(p.arquivos_enviados),
+                'arquivos': bool(p.arquivos_prontos),
             })
 
     resultados = sorted(resultados, key=lambda x: x['label'].lower())

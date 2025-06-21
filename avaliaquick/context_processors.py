@@ -10,8 +10,8 @@ def notificacoes_contexto(request):
     avaliacao_atual = AvaliacaoAnual.objects.filter(status='ABE').order_by('-data_inicio').first()
 
     if avaliacao_atual:
-        pendentes = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_enviados__isnull=True).count()
-        prontos_para_avaliar = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_enviados__isnull=False).distinct().count()
+        pendentes = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=False).count()
+        prontos_para_avaliar = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='PEN', arquivos_prontos=True).distinct().count()
         em_andamento = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='AND').count()
         finalizados = Pendentes.objects.filter(avaliacaoAnual=avaliacao_atual, status='FIN').count()
 

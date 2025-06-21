@@ -2,6 +2,8 @@ import random
 
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+
 from .models import Formulario_A, Formulario_B, Formulario_C
 from .forms import FormularioAForm, FormularioBForm, FormularioCForm
 from avaliaquick.models import Pendentes
@@ -9,6 +11,7 @@ from avaliaquick.models import Pendentes
 #--FORMS A--
 def criarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_A.objects.filter(avaliacao=avaliacao).first()
 
     if request.method == 'POST':
@@ -43,20 +46,12 @@ def criarFormularioA(request, id):
             form = FormularioAForm(instance=formulario_existente)
         else:
             form = FormularioAForm()
-    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador})
 
-def editarFormularioA(request, id):
-    obj = get_object_or_404(Formulario_A, id=id)
-    form = FormularioAForm(request.POST or None, instance=obj)
-    if form.is_valid():
-        form.save()
-        return redirect('/listaFormularioA')
-    else:
-        print(form.errors)
-    return  render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
 
 def visualizarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_A, avaliacao=avaliacao)
 
     if request.method == 'POST':
@@ -68,11 +63,12 @@ def visualizarFormularioA(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A'})
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador})
 
 #--FORMS B--
 def criarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_B.objects.filter(avaliacao=avaliacao).first()
 
     if request.method == 'POST':
@@ -115,21 +111,13 @@ def criarFormularioB(request, id):
             form = FormularioBForm(instance=formulario_existente)
         else:
             form = FormularioBForm()
-    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioA', args=[id]),})
 
-def editarFormularioB(request, id):
-    obj = get_object_or_404(Formulario_B, id=id)
-    form = FormularioBForm(request.POST or None, instance=obj)
 
-    if form.is_valid():
-        form.save()
-        return redirect('/formB.html')
-    else:
-        print(form.errors)
-    return  render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
 
 def visualizarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_B, avaliacao=avaliacao)
 
     if request.method == 'POST':
@@ -141,11 +129,12 @@ def visualizarFormularioB(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B'})
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador})
 
 #--FORMS C--
 def criarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_C.objects.filter(avaliacao=avaliacao).first()
 
     if request.method == 'POST':
@@ -213,20 +202,13 @@ def criarFormularioC(request, id):
             form = FormularioCForm(instance=formulario_existente)
         else:
             form = FormularioCForm()
-    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioB', args=[id]),})
 
-def editarFormularioC(request, id):
-    obj = get_object_or_404(Formulario_C, id=id)
-    form = FormularioCForm(request.POST or None, instance=obj)
-    if form.is_valid():
-        form.save()
-        return redirect('/formC')
-    else:
-        print(form.errors)
-    return  render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
+
 
 def visualizarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_C, avaliacao=avaliacao)
 
     if request.method == 'POST':
@@ -238,5 +220,5 @@ def visualizarFormularioC(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C'})
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador})
 # Create your views here.
