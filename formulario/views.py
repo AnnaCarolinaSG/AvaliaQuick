@@ -7,11 +7,13 @@ from django.urls import reverse
 
 from .models import Formulario_A, Formulario_B, Formulario_C
 from .forms import FormularioAForm, FormularioBForm, FormularioCForm
-from avaliaquick.models import Pendentes
+from avaliaquick.models import Pendentes, AvaliacaoAnual
 
 #--FORMS A--
 def criarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_A.objects.filter(avaliacao=avaliacao).first()
 
@@ -47,11 +49,13 @@ def criarFormularioA(request, id):
             form = FormularioAForm(instance=formulario_existente)
         else:
             form = FormularioAForm()
-    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador})
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador, 'ano': ano})
 
 
 def visualizarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_A, avaliacao=avaliacao)
 
@@ -64,11 +68,13 @@ def visualizarFormularioA(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador})
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador, 'ano': ano})
 
 #--FORMS B--
 def criarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_B.objects.filter(avaliacao=avaliacao).first()
 
@@ -112,12 +118,14 @@ def criarFormularioB(request, id):
             form = FormularioBForm(instance=formulario_existente)
         else:
             form = FormularioBForm()
-    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioA', args=[id]),})
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioA', args=[id]), 'ano': ano})
 
 
 
 def visualizarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_B, avaliacao=avaliacao)
 
@@ -130,11 +138,13 @@ def visualizarFormularioB(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador})
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'ano': ano})
 
 #--FORMS C--
 def criarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_C.objects.filter(avaliacao=avaliacao).first()
 
@@ -204,12 +214,14 @@ def criarFormularioC(request, id):
             form = FormularioCForm(instance=formulario_existente)
         else:
             form = FormularioCForm()
-    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioB', args=[id]),})
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioB', args=[id]), 'ano': ano})
 
 
 
 def visualizarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
+    periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
+    ano = int(periodo.data_inicio.year) - 1
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_C, avaliacao=avaliacao)
 
@@ -222,5 +234,5 @@ def visualizarFormularioC(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador})
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'ano': ano})
 # Create your views here.

@@ -199,7 +199,7 @@
 <body>
 <form class="container formulario" method="post">
 {% csrf_token %}
-    <div class="header">Avaliação Embrapa [ano atual]</div>
+    <div class="header">Avaliação Embrapa {{ ano }}</div>
     <div class="label-group">
         <label for="nome">Nome do pesquisador:</label>
         <label for="matricula">Matrícula:</label>
