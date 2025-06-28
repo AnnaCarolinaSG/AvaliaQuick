@@ -13,7 +13,7 @@ from avaliaquick.models import Pendentes, AvaliacaoAnual
 def criarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_A.objects.filter(avaliacao=avaliacao).first()
 
@@ -55,7 +55,7 @@ def criarFormularioA(request, id):
 def visualizarFormularioA(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_A, avaliacao=avaliacao)
 
@@ -74,7 +74,7 @@ def visualizarFormularioA(request, id):
 def criarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_B.objects.filter(avaliacao=avaliacao).first()
 
@@ -125,7 +125,7 @@ def criarFormularioB(request, id):
 def visualizarFormularioB(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_B, avaliacao=avaliacao)
 
@@ -144,7 +144,7 @@ def visualizarFormularioB(request, id):
 def criarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = Formulario_C.objects.filter(avaliacao=avaliacao).first()
 
@@ -221,7 +221,7 @@ def criarFormularioC(request, id):
 def visualizarFormularioC(request, id):
     avaliacao = get_object_or_404(Pendentes, id=id)
     periodo = get_object_or_404(AvaliacaoAnual, id=avaliacao.avaliacaoAnual_id)
-    ano = int(periodo.data_inicio.year) - 1
+    ano = int(periodo.data_inicio.year)
     pesquisador = avaliacao.pesquisador
     formulario_existente = get_object_or_404(Formulario_C, avaliacao=avaliacao)
 
