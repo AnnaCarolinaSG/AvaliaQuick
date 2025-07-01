@@ -213,13 +213,13 @@
 
     <div class="footer">
         <div style="float: left">
-            <a href="{% url 'avaliacao' %}" class="btn btn-cancelar">Cancelar</a>
+            <a href="{% if fechado %}{% url 'apresentar_anteriores' periodo.id %}{% else %}{% url 'avaliacao' %}{% endif %}" class="btn btn-cancelar">Cancelar</a>
         </div>
         <div style="float: right">
             {% if formulario_anterior_url %}
                 <a href="{{ formulario_anterior_url }}" class="btn btn-voltar">Voltar</a>
             {% endif %}
-            <button class="btn btn-proximo" type="submit">Próximo</button>
+            <button class="btn btn-proximo" type="submit">{% if tipo == "C" %}Finalizar{% else %}Próximo{% endif %}</button>
         </div>
     </div>
 {% block etapa %} {% endblock %}

@@ -49,6 +49,8 @@ def criarFormularioA(request, id):
             form = FormularioAForm(instance=formulario_existente)
         else:
             form = FormularioAForm()
+
+
     return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador, 'ano': ano})
 
 
@@ -68,7 +70,12 @@ def visualizarFormularioA(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador, 'ano': ano})
+    if periodo.status == "FEC":
+        fechado = True
+    else:
+        fechado = False
+
+    return render(request, 'formulario/formA.html', {'form': form, 'tipo': 'A', 'pesquisador': pesquisador, 'ano': ano, 'fechado': fechado, "periodo": periodo})
 
 #--FORMS B--
 def criarFormularioB(request, id):
@@ -118,6 +125,7 @@ def criarFormularioB(request, id):
             form = FormularioBForm(instance=formulario_existente)
         else:
             form = FormularioBForm()
+
     return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioA', args=[id]), 'ano': ano})
 
 
@@ -138,7 +146,12 @@ def visualizarFormularioB(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'ano': ano})
+    if periodo.status == "FEC":
+        fechado = True
+    else:
+        fechado = False
+
+    return render(request, 'formulario/formB.html', {'form': form, 'tipo': 'B', 'pesquisador': pesquisador, 'ano': ano, 'fechado': fechado, "periodo": periodo})
 
 #--FORMS C--
 def criarFormularioC(request, id):
@@ -214,6 +227,7 @@ def criarFormularioC(request, id):
             form = FormularioCForm(instance=formulario_existente)
         else:
             form = FormularioCForm()
+
     return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'formulario_anterior_url': reverse('criarFormularioB', args=[id]), 'ano': ano})
 
 
@@ -226,7 +240,7 @@ def visualizarFormularioC(request, id):
     formulario_existente = get_object_or_404(Formulario_C, avaliacao=avaliacao)
 
     if request.method == 'POST':
-        return redirect('avaliacao')
+        return redirect(f'/avaliacao/{periodo.id}/')
 
     form = FormularioCForm(instance=formulario_existente)
 
@@ -234,5 +248,10 @@ def visualizarFormularioC(request, id):
     for field in form.fields.values():
         field.disabled = True
 
-    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'ano': ano})
+    if periodo.status == "FEC":
+        fechado = True
+    else:
+        fechado = False
+
+    return render(request, 'formulario/formC.html', {'form': form, 'tipo': 'C', 'pesquisador': pesquisador, 'ano': ano, 'fechado': fechado, "periodo": periodo})
 # Create your views here.

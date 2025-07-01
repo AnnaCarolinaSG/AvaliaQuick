@@ -91,7 +91,7 @@ def arquivos_prontos(request, id):
         avaliacao.arquivos_prontos = True
         avaliacao.save()
         messages.success(request, 'Pesquisador movido para a próxima etapa!')
-    return redirect('avaliacao')
+    return redirect('/avaliacao/?aba=pendentes')
 
 
 def adicionar_arquivos(request):
@@ -102,17 +102,17 @@ def adicionar_arquivos(request):
             avaliacao = Pendentes.objects.get(id=avaliacao_id)
         except Pendentes.DoesNotExist:
             messages.error(request, "Avaliação não encontrada.")
-            return redirect('avaliacao')
+            return redirect('/avaliacao/?aba=pendentes')
 
         arquivos = request.FILES.getlist('arquivos')
         for arquivo in arquivos:
             Arquivo.objects.create(pendente=avaliacao, arquivo=arquivo)
 
         messages.success(request, "Arquivo(s) adicionados com sucesso!")
-        return redirect('avaliacao')
+        return redirect('/avaliacao/?aba=pendentes')
 
     messages.error(request, "Erro ao adicionar arquivo.")
-    return redirect('avaliacao')
+    return redirect('/avaliacao/?aba=pendentes')
 
     # if request.method == "POST" and request.FILES.get('arquivos'):
     #     arquivo = request.FILES['arquivos']
@@ -169,7 +169,7 @@ def solicitar_novamente(request, avaliacao_id):
         )
 
         messages.success(request, 'E-mail enviado com sucesso!')
-    return redirect('avaliacao')
+    return redirect('/avaliacao/?aba=pendentes')
 
 def avaliacao(request):
     if not request.user.is_authenticated:
@@ -343,7 +343,7 @@ def remover_arquivo(request, arquivo_id):
         # Apagar do banco de dados
         arquivo.delete()
         messages.success(request, "Arquivo removido com sucesso.")
-    return redirect('avaliacao')
+    return redirect('/avaliacao/?aba=pendentes')
 
 def sucesso_view(request):
     return render(request, 'avaliaquick/sucesso.html')

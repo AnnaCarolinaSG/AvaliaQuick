@@ -106,6 +106,7 @@
     }
 
     .avaliacao-data, .avaliacao-info {
+        width: 250px;
         line-height: 1.6;
         font-size: 20px;
         align-items: center;
@@ -483,26 +484,25 @@
             <button class="btn" onclick="voltarParaPrincipal(3)">Voltar</button>
         </div>
 
-        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true" style="width: 100%">
-          <div class="modal-dialog" role="document" style="width: 100%">
-            <form method="post" id="formConfirmDelete" style="width: 100%">
-                {% csrf_token %}
-                <input type="hidden" name="senha_confirmacao" id="senha_confirmacao">
-                <div class="modal-content-arquivo">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="confirmModalLabel">Confirme a Senha</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Para remover o arquivo, digite sua senha:</p>
-                        <input type="password" name="senha_confirmacao" class="form-control" required>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                      <button type="submit" class="btn btn-danger">Confirmar e Remover</button>
-                    </div>
+        <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="confirmModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+          <div class="modal-dialog" role="document">
+            <form method="post" id="formConfirmDelete">
+              {% csrf_token %}
+              <div class="modal-content modal-content-arquivo">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="confirmModalLabel">Confirme a Senha</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Para remover o arquivo, digite sua senha:</p>
+                  <input type="password" name="senha_confirmacao" id="senha_confirmacao" class="form-control" required>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-danger">Confirmar e Remover</button>
+                </div>
               </div>
             </form>
           </div>
@@ -601,6 +601,8 @@
                                         <a href="{{ arquivo.arquivo.url }}" class="btn" download style="color: #FFFFFF; text-decoration: none; background-color: green;">Baixar ⬇️</a>
                                     </div>
                                 </div>
+                        {% empty %}
+                            <p>Nenhum arquivo adicionado.</p>
                         {% endfor %}
                     {% endif %}
                 </div>
