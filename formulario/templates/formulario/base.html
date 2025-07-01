@@ -4,7 +4,7 @@
 {% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Avaliação Embrapa [ano atual]</title>
+    <title>Avaliação Embrapa {{ ano }}</title>
 
     <style>
         body {
@@ -214,6 +214,9 @@
     <div class="footer">
         <div style="float: left">
             <a href="{% if fechado %}{% url 'apresentar_anteriores' periodo.id %}{% else %}{% url 'avaliacao' %}{% endif %}" class="btn btn-cancelar">Cancelar</a>
+        </div>
+        <div>
+            <button onclick="window.print()" class="btn btn-danger" style="background-color: green; color: #FFFFFF;">Salvar como PDF</button>
         </div>
         <div style="float: right">
             {% if formulario_anterior_url %}
