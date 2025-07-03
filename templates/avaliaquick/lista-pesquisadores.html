@@ -291,7 +291,7 @@
                         {% endif %}
                       </div>
                     {% else %}
-                        <button class="btn avaliar"
+                        <button style="width: 50%;" class="btn avaliar"
                                 onclick="editarPesquisador(this)"
                                 data-id="{{ pesquisador.id }}"
                                 data-nome="{{ pesquisador.nome }}"
@@ -301,7 +301,7 @@
                             Editar
                         </button>
                         <input type="hidden" id="pesq-matricula-original-{{ pesquisador.id }}" value="{{ pesquisador.matricula }}">
-                        <button type="button" class="btn btn-danger"
+                        <button style="width: 50%;" class="btn btn-danger"
                                 data-toggle="modal"
                                 data-target="#confirmModal"
                                 data-pesquisador-id="{{ pesquisador.id }}">
