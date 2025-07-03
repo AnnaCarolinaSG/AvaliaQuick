@@ -4,12 +4,11 @@ from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-
 from setup import settings
 from .models import Pesquisador, Pendentes, AvaliacaoAnual, Arquivo, CustomUser
-from django.db.models import Q, Avg, Count
+from django.db.models import Q, Avg
 from .forms import FormularioPesquisador, EnvioArquivosForm
-from datetime import datetime
+from django.utils import timezone
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponseForbidden
@@ -32,7 +31,7 @@ def criar_avaliacao(request):
     if request.method == 'POST':
         AvaliacaoAnual.objects.create(
             usuario=request.user,
-            data_inicio=datetime.now(),
+            data_inicio=timezone.now(),
             status='ABE'
         )
         messages.success(request, 'Período de avaliação iniciada com sucesso!')
@@ -60,7 +59,7 @@ def fechar_avaliacao(request):
         pendentes = Pendentes.objects.filter(usuario=request.user, avaliacaoAnual=avaliacao_id).count()
         avaliacao.status = 'FEC'
         avaliacao.qtd_avaliados = pendentes
-        avaliacao.data_fim = datetime.now()
+        avaliacao.data_fim = timezone.now()
 
         media = Pendentes.objects.filter(
             usuario=request.user,
@@ -87,7 +86,7 @@ def reabrir_avaliacao(request):
 def arquivos_prontos(request, id):
     if request.method == 'POST':
         avaliacao = Pendentes.objects.get(id=id)
-        avaliacao.data_hora = datetime.now()
+        avaliacao.data_hora = timezone.now()
         avaliacao.arquivos_prontos = True
         avaliacao.save()
         messages.success(request, 'Pesquisador movido para a próxima etapa!')
@@ -462,7 +461,7 @@ def adicionar_pesquisador(request, pesquisador_id):
     if request.method == 'POST':
         periodo = AvaliacaoAnual.objects.filter(usuario=request.user, status='ABE').first()
         pesquisador = get_object_or_404(Pesquisador, id=pesquisador_id, usuario=request.user)
-        Pendentes.objects.create(usuario=request.user, pesquisador=pesquisador, avaliacaoAnual=periodo, status='PEN', data_hora=datetime.now())
+        Pendentes.objects.create(usuario=request.user, pesquisador=pesquisador, avaliacaoAnual=periodo, status='PEN', data_hora=timezone.now())
     return redirect('avaliacao')
 
 def remover_pesquisador(request, pesquisador_id):
