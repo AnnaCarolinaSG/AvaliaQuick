@@ -157,8 +157,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'brianhcosta@gmail.com'
-EMAIL_HOST_PASSWORD = 'fott gelu zxfy yiww'
+EMAIL_HOST_USER = 'avaliaquick@gmail.com'
+EMAIL_HOST_PASSWORD = 'yvqs tjlr wboz ktaa'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CSRF_TRUSTED_ORIGINS = ['https://avaliaquick-production.up.railway.app']

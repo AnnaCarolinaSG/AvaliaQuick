@@ -244,7 +244,7 @@
 
 {% block content %}
 
-<h2>Avaliação {% if periodoAtual %}{{ periodoAtual.data_inicio|date:"Y"|add:"-1" }} - Início {% with periodoAtual.data_inicio.month as mes %}
+<h2>Avaliação {% if periodoAtual %}{{ periodoAtual.data_inicio|date:"Y" }} - Início {% with periodoAtual.data_inicio.month as mes %}
                     {% if mes <= 6 %}
                         1.{{ periodoAtual.data_inicio|date:"Y" }}
                     {% else %}
